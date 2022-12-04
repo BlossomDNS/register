@@ -1,9 +1,0 @@
-{
-    "owner": {
-        "username": "test",
-        "email": "anactualemail@gmail.com"
-    },
-    "record": {
-        "CNAME": "test.github.io"
-    }
-}
