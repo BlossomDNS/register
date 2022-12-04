@@ -1,0 +1,9 @@
+{
+    "owner": {
+      "username": "your username here",
+      "email": "your email here",
+    },
+    "record": {
+        "CNAME": "website to connect to. (Usually github.io pages)"
+    }
+}
