@@ -4,7 +4,7 @@ An identity for developers on the web.
 
 ## What is LDP?
 
-**x.lunes.host** is a free identity for developers on the web. This service offers a handy subdomain like `foo.thedev.id` or `bar.thedev.id` for use on your static sites via [CNAME record](https://en.wikipedia.org/wiki/CNAME_record). Fork, add subdomain and send a Pull Request. We will make it work.
+**x.lunes.host** is a free identity for developers on the web. This service offers a handy subdomain like `test.lunes.host` or `hello.lunes.host` for use on your static sites via [CNAME record](https://en.wikipedia.org/wiki/CNAME_record). Fork, add subdomain and send a Pull Request. We will make it work.
 
 ## How to get one
 
