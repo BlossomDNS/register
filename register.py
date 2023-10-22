@@ -20,7 +20,17 @@ class Cloudflare:
             "ttl": TTL,
             "proxied": PROXIED
         }
-        self.execute(dns_record_data)
+        self.execute(dns_record_data=dns_record_data)
+
+    def insert_CNAME_record(self, DNS_RECORD_NAME:str, DNS_RECORD_CONTENT: str, TTL:int = 1, PROXIED: bool = False):
+        dns_record_data = {
+            "type": "CNAME",
+            "name": DNS_RECORD_NAME,
+            "content": DNS_RECORD_CONTENT,
+            "ttl": TTL,
+            "proxied": PROXIED
+        }
+        self.execute(dns_record_data=dns_record_data)
     
     def execute(self, dns_record_data):
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
