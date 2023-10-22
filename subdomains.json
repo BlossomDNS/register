@@ -1,4 +1,6 @@
 {
-  "github_username": "link"
-  "JewishLewish": "https://github.com/JewishLewish"
+  "jewishlewish": {
+    "type":"CNAME",
+    "target":"github.com/JewishLewish"
+  }
 }
