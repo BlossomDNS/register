@@ -1,9 +1,13 @@
 import cloudflare
 from flask import Flask, g, redirect, render_template, request,session, url_for
 from admins import *
+from github import *
+
 
 app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
+
+load_github_sites(app=app)
 
 @app.before_request
 def before_request():
@@ -14,7 +18,7 @@ def before_request():
         g.user = user
 
 
-@app.route('/test')
+@app.route('/profile')
 def profile():
     if not g.user:
         return redirect(url_for('login'))
@@ -37,6 +41,7 @@ def login():
         return redirect(url_for('login'))
         
     return render_template("login.html")
+
 
 if __name__ == '__main__':
     app.run()
