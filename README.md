@@ -23,3 +23,6 @@ An identity for developers on the web.
 - [is-really.cool](https://github.com/is-really-cool/register)
 - [js.org](https://github.com/js-org/js.org) (*JavaScript projects only*)
 - [merahputih.moe](https://github.com/ScathachGrip/merahputih.moe)
+
+
+This project was inspired by thedev.id's project: https://github.com/thedev-id/thedev.id[https://github.com/thedev-id/thedev.id]
