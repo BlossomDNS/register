@@ -11,3 +11,4 @@ class Admin:
 
 admin_accts = []
 admin_accts.append(Admin(id=1, username="test",password="test"))
+admin_accts.append(Admin(id=2, username="3",password="3"))
