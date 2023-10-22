@@ -8,7 +8,8 @@
     <!--  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css"> --->
     <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/css/bootstrap.min.css') }}">
     <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/js/bootstrap.min.js') }}">
-    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <!-- <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css"> --->
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/fonts/fontawesome-all.min.css') }}">
     <!-- <link rel="stylesheet" href="assets/css/styles.min.css"> --->
     <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/styles.min.css') }}">
     
@@ -30,7 +31,7 @@
                     <div class="tab-content">
                         <div class="tab-pane active" role="tabpanel" id="tab-1">
                             {% for link in links %}
-                            <ul class="thread-list", src = "www.google.com">
+                            <ul class="thread-list">
                                 <li class="thread"><span class="time">{{link.date}}</span><a href={{ link.url }} class="title">{{ link.title }}</a><span class="icon"> <a class="subscribe" href="javascript:void(0)"><i class="fa fa-star-o"></i></a><a class="flag" href="javascript:void(0)"><i class="fa fa-flag"></i></a></span></li>
                             </ul>
                             {% endfor %}
