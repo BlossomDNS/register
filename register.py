@@ -23,6 +23,7 @@ class Cloudflare:
         self.execute(dns_record_data)
     
     def execute(self, dns_record_data):
+        url = f"https://api.cloudflare.com/client/v4/zones/{ZONE_ID}/dns_records"
         response = requests.post(url, headers=self.headers, data=json.dumps(dns_record_data))
 
         # Check the response
