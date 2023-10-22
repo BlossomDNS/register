@@ -64,4 +64,4 @@ class Cloudflare:
 cloudflare = Cloudflare("your-api-token","your-account-id","your-zone-id")
 
 
-cloudflare.insert_A_record(DNS_RECORD_NAME="example.com", DNS_RECORD_CONTENT="test.example.com")
+cloudflare.insert_A_record(DNS_RECORD_NAME="www.example.com", DNS_RECORD_CONTENT="test.example.com")
