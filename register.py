@@ -12,9 +12,9 @@ class Cloudflare:
             "Content-Type": "application/json"
         }
     
-    def insert_A_record(self, DNS_RECORD_NAME:str, DNS_RECORD_TYPE:str, DNS_RECORD_CONTENT: str, TTL:int = 1, PROXIED: bool = False):
+    def insert_A_record(self, DNS_RECORD_NAME:str, DNS_RECORD_CONTENT: str, TTL:int = 1, PROXIED: bool = False):
         dns_record_data = {
-            "type": DNS_RECORD_TYPE,
+            "type": "A",
             "name": DNS_RECORD_NAME,
             "content": DNS_RECORD_CONTENT,
             "ttl": TTL,
@@ -41,7 +41,7 @@ class Cloudflare:
 cloudflare = Cloudflare("your-api-token","your-account-id","your-zone-id")
 
 
-cloudflare.insert_A_record(DNS_RECORD_NAME="example.com", DNS_RECORD_TYPE="A", DNS_RECORD_CONTENT="192.168.1.1")
+cloudflare.insert_A_record(DNS_RECORD_NAME="example.com", DNS_RECORD_CONTENT="192.168.1.1")
 
 #TTL = 1  # Time to Live in seconds
 #PROXIED = False
