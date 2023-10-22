@@ -12,6 +12,7 @@ class Cloudflare:
             "Content-Type": "application/json"
         }
     
+    #Most likely we won't use this. (clueless)
     def insert_A_record(self, DNS_RECORD_NAME:str, DNS_RECORD_CONTENT: str, TTL:int = 1, PROXIED: bool = False):
         dns_record_data = {
             "type": "A",
@@ -20,17 +21,19 @@ class Cloudflare:
             "ttl": TTL,
             "proxied": PROXIED
         }
-        self.execute(dns_record_data=dns_record_data)
+        self.execute(dns_record_data=dns_record_data) 
 
     def insert_CNAME_record(self, DNS_RECORD_NAME:str, DNS_RECORD_CONTENT: str, TTL:int = 1, PROXIED: bool = False):
         dns_record_data = {
             "type": "CNAME",
-            "name": DNS_RECORD_NAME,
-            "content": DNS_RECORD_CONTENT,
+            "name": DNS_RECORD_NAME, #the ___.site.com
+            "content": DNS_RECORD_CONTENT, # target site
             "ttl": TTL,
             "proxied": PROXIED
         }
-        self.execute(dns_record_data=dns_record_data)
+        if self.execute(dns_record_data=dns_record_data) == 200:
+            self.update_json(dns_record_data)
+        
     
     def execute(self, dns_record_data):
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
@@ -40,18 +43,25 @@ class Cloudflare:
         if response.status_code == 200:
             print("DNS record added successfully.")
             print("Response:", response.json())
+            return 200
         else:
             print("Failed to add DNS record.")
             print("Status Code:", response.status_code)
             print("Response:", response.text)
+            return -1
+        
+    def update_json(dns_record):
+        with open("subdomain.json", "r") as jsonFile:
+            data = json.load(jsonFile)
 
+        data[dns_record["name"].split(".")[0]] = {"target":dns_record["content"],"type":dns_record["type"]}
+
+        with open("subdomain.json", "w") as jsonFile:
+            json.dump(data, jsonFile)
         
 
 
 cloudflare = Cloudflare("your-api-token","your-account-id","your-zone-id")
 
 
-cloudflare.insert_A_record(DNS_RECORD_NAME="example.com", DNS_RECORD_CONTENT="192.168.1.1")
-
-#TTL = 1  # Time to Live in seconds
-#PROXIED = False
+cloudflare.insert_A_record(DNS_RECORD_NAME="example.com", DNS_RECORD_CONTENT="test.example.com")
