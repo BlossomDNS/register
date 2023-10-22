@@ -29,22 +29,9 @@
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" role="tabpanel" id="tab-1">
-                            <div class="thread-list-head">
-                                <nav class="thread-pages">
-                                    <ul class="pagination">
-                                        <li class="page-item"><a class="page-link" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
-                                        <li class="page-item"><a class="page-link">1</a></li>
-                                        <li class="page-item"><a class="page-link">2</a></li>
-                                        <li class="page-item"><a class="page-link">3</a></li>
-                                        <li class="page-item"><a class="page-link">4</a></li>
-                                        <li class="page-item"><a class="page-link">5</a></li>
-                                        <li class="page-item"><a class="page-link" aria-label="Next"><span aria-hidden="true">»</span></a></li>
-                                    </ul>
-                                </nav>
-                            </div>
                             {% for link in links %}
-                            <ul class="thread-list">
-                                <li class="thread"><span class="time">Apr 21</span><span class="title">{{ link }}</span><span class="icon"> <a class="subscribe" href="javascript:void(0)"><i class="fa fa-star-o"></i></a><a class="flag" href="javascript:void(0)"><i class="fa fa-flag"></i></a></span></li>
+                            <ul class="thread-list", src = "www.google.com">
+                                <li class="thread"><span class="time">{{link.date}}</span><a href={{ link.url }} class="title">{{ link.title }}</a><span class="icon"> <a class="subscribe" href="javascript:void(0)"><i class="fa fa-star-o"></i></a><a class="flag" href="javascript:void(0)"><i class="fa fa-flag"></i></a></span></li>
                             </ul>
                             {% endfor %}
                         </div>

@@ -1,5 +1,6 @@
 from flask import render_template
 import requests
+from datetime import datetime
 
 
 def get_pr_date():
@@ -11,6 +12,7 @@ def get_pr_date():
     if response.status_code == 200:
         pulls_data = response.json()
 
+        return pulls_data
         open_pr = [pull['html_url'] for pull in pulls_data] 
         return open_pr
 
@@ -21,6 +23,9 @@ def get_pr_date():
 def load_github_sites(app):
     @app.route('/pr')
     def pr():
-        links = get_pr_date()
+        date_format = "%Y-%m-%dT%H:%M:%SZ"
+        pulls_data = get_pr_date()
+        links = [{"title":pull["title"], "url": pull['html_url'], "date": datetime.strptime(pull['created_at'], date_format).strftime("%Y-%m-%d")} for pull in pulls_data]
+
 
         return render_template('github.html', links = links, n = len(links))
