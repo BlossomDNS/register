@@ -7,7 +7,7 @@ from github import *
 app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
 
-load_github_sites(app=app)
+load_github_sites(app=app) #loads sites from github api
 
 @app.before_request
 def before_request():

@@ -10,6 +10,7 @@ Sending requests to cloudflare
 
 import requests
 import json
+from github import cloudflare_api_token, cloudflare_account_id, cloudflare_zone_id
 
 class Cloudflare:
     def __init__(self, api_token, account_id, zone_id):
@@ -71,7 +72,7 @@ class Cloudflare:
         
 
 
-cloudflare = Cloudflare("your-api-token","your-account-id","your-zone-id")
+cloudflare = Cloudflare(cloudflare_api_token,cloudflare_api_token,cloudflare_zone_id)
 
 
 cloudflare.insert_A_record(DNS_RECORD_NAME="www.example.com", DNS_RECORD_CONTENT="test.example.com")
