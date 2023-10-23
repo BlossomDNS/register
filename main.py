@@ -18,12 +18,12 @@ def before_request():
         g.user = user
 
 
-@app.route('/test', methods=['GET', 'POST']) #admin site soon
-def test():
+@app.route('/admin', methods=['GET', 'POST']) #admin site soon
+def admin():
     if not g.user:
         return redirect(url_for('login'))
 
-    return render_template('test.html')
+    return render_template('admin.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -36,7 +36,7 @@ def login():
         user = [x for x in admin_accts if x.username == email][0]
         if user and user.password == pw:
             session['user_id'] = user.id
-            return redirect(url_for('test'))
+            return redirect(url_for('admin'))
         
         return redirect(url_for('login'))
         
