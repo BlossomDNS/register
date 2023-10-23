@@ -18,8 +18,8 @@ def before_request():
         g.user = user
 
 
-@app.route('/profile')
-def profile():
+@app.route('/test', methods=['GET', 'POST']) #admin site soon
+def test():
     if not g.user:
         return redirect(url_for('login'))
 
@@ -30,7 +30,7 @@ def login():
     if request.method == "POST":
         session.pop('user_id', None)
         
-        email = request.form["username"]
+        email = request.form["email"]
         pw = request.form["password"]
 
         user = [x for x in admin_accts if x.username == email][0]

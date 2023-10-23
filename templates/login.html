@@ -14,9 +14,9 @@
 <body>
     <div class="login-card"><img class="profile-img-card" src="{{ url_for('static',filename='styles/img/avatar_2x.png') }}">
         <p class="profile-name-card"> </p>
-        <form class="form-signin">
-            <input class="form-control" type="email" id="inputEmail" required="" placeholder="Email address" autofocus="">
-            <input class="form-control" type="password" id="inputPassword" required="" placeholder="Password">
+        <form class="form-signin", method="POST"><span class="reauth-email"> </span>
+            <input class="form-control" type="email" id="inputEmail" required="" placeholder="Email address" autofocus="", name = "email">
+            <input class="form-control" type="password" id="inputPassword" required="" placeholder="Password", name = "password">
             <div class="checkbox"></div><button class="btn btn-primary btn-lg d-block btn-signin w-100" type="submit">Sign in</button>
         </form>
     </div>
