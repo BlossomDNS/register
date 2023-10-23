@@ -1,3 +1,11 @@
+"""
+
+github.py
+
+Contains github for github side of the program
+
+"""
+
 from flask import render_template
 import requests
 from datetime import datetime
@@ -11,10 +19,7 @@ def get_pr_date():
 
     if response.status_code == 200:
         pulls_data = response.json()
-
         return pulls_data
-        open_pr = [pull['html_url'] for pull in pulls_data] 
-        return open_pr
 
     else:
         print(f"Request failed with status code {response.status_code}")

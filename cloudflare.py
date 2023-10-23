@@ -1,3 +1,13 @@
+"""
+
+cloudflare.py
+
+Contains cloudflare code for the program
+
+Sending requests to cloudflare
+
+"""
+
 import requests
 import json
 
@@ -35,7 +45,7 @@ class Cloudflare:
             self.update_json(dns_record_data)
         
     
-    def execute(self, dns_record_data):
+    def execute(self, dns_record_data) -> int:
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
         response = requests.post(url, headers=self.headers, data=json.dumps(dns_record_data))
 
