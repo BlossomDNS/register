@@ -9,11 +9,11 @@ Contains github for github side of the program
 from flask import render_template
 import requests
 from datetime import datetime
-from config import github_url
+from config import github_repo
 
 
 def get_pr_date():
-    url = f'https://api.github.com/repos/{github_url}/pulls'
+    url = f'https://api.github.com/repos/{github_repo}/pulls'
 
     response = requests.get(url)
 
