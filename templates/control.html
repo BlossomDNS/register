@@ -21,33 +21,33 @@
             <div class="col-md-4">
                 <section class="card">
                     <h1>A Record</h1>
-                    <form>
+                    <form, method="POST">
                         <div class="md-input-group">
                             <p style="margin-bottom: 0px;font-size: 18px;">Subdomain (<em><span style="text-decoration: underline;">this</span>.domain.com)</em></p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" name="name_A">
                         </div>
                         <div class="md-input-group">
                             <p style="margin-bottom: 0px;font-size: 18px;">Content</p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" name="content_A">
                         </div>
-                    </form><button class="btn btn-primary d-block md-btn w-100" type="button">Update Cloudflare</button>
+                    </form><button method = "POST", class="btn btn-primary d-block md-btn w-100" type="button">Update Cloudflare</button>
                 </section>
             </div>
             <div class="col-md-4">
                 <section class="card">
                     <h1>CNAME Record</h1>
-                    <form>
+                    <form class="form-signin", method="POST">
                         <div class="md-input-group">
                             <p style="margin-bottom: 0px;font-size: 18px;">Subdomain (<em><span style="text-decoration: underline;">this</span>.domain.com)</em></p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" name="name_CNAME">
                         </div>
                         <div class="md-input-group">
                             <p style="margin-bottom: 0px;font-size: 18px;">Content</p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" content="content_CNAME">
                         </div>
-                    </form><button class="btn btn-primary d-block md-btn w-100" type="button">Update Cloudflare</button>
+                    </form><button class="btn btn-primary d-block md-btn w-100" type="submit">Update Cloudflare</button>
                 </section>
             </div>
             <div class="col-md-4">
                 <section class="card">
                     <h1>Delete Record</h1>
-                    <form>
+                    <form, method="POST">
                         <div class="md-input-group">
                             <p style="margin-bottom: 0px;font-size: 18px;">Subdomain (<em><span style="text-decoration: underline;">this</span>.domain.com)</em></p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" name="name_del">
                         </div>

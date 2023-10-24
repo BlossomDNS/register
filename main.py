@@ -22,9 +22,8 @@ def before_request():
 def admin():
     if not g.user:
         return redirect(url_for('login'))
-    
-    links = [{"title":pull["title"], "url": pull['html_url'], "date": datetime.strptime(pull['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d")} for pull in get_pr_date()]
 
+    links = [{"title":pull["title"], "url": pull['html_url'], "date": datetime.strptime(pull['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d")} for pull in get_pr_date()]
     dns_content = cloudflare.getDNSrecords()
 
     return render_template('admin.html', links = links, n = len(links), dns_content=dns_content, dns_n = len(dns_content), account_id=cloudflare_account_id)
@@ -33,6 +32,10 @@ def admin():
 def control():
     if not g.user:
         return redirect(url_for('login'))
+    
+    if request.method == "POST":
+        print("CAUGHT")
+        print(request.form())
     
     return render_template("control.html")
     
