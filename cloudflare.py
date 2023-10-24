@@ -24,13 +24,14 @@ class Cloudflare:
             "Content-Type": "application/json"
         }
     
-    def getDNSrecords(self):
+    def getDNSrecords(self) -> list:
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
 
         response = requests.get(url, headers=self.headers)
 
         if response.status_code == 200:
-            print(response.content)
+            content = json.loads(response.content)["result"]
+            return [{"type":pull["type"], "name":pull["name"],"content":pull["content"],"proxied":pull["proxied"], "ttl":pull["ttl"]} for pull in content]
         else:
             print("DIDN'T GET DNS RECORDS")
 
@@ -85,7 +86,5 @@ class Cloudflare:
         
 
 
-cloudflare = Cloudflare(api_token=cloudflare_api_token,account_id=cloudflare_account_id,zone_id=cloudflare_zone_id)
-print(cloudflare.getDNSrecords())
 #inserts A_record
 #cloudflare.insert_A_record(DNS_RECORD_NAME=cloudflare_url, DNS_RECORD_CONTENT="test."+cloudflare_url)

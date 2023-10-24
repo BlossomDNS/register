@@ -5,6 +5,8 @@ from cloudflare import *
 
 app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
+cloudflare = Cloudflare(api_token=cloudflare_api_token,account_id=cloudflare_account_id,zone_id=cloudflare_zone_id)
+#print(cloudflare.getDNSrecords())
 
 load_github_sites(app=app) #loads sites from github api
 
@@ -26,7 +28,9 @@ def admin():
     pulls_data = get_pr_date()
     links = [{"title":pull["title"], "url": pull['html_url'], "date": datetime.strptime(pull['created_at'], date_format).strftime("%Y-%m-%d")} for pull in pulls_data]
 
-    return render_template('admin.html', links = links, n = len(links))
+    dns_content = cloudflare.getDNSrecords()
+
+    return render_template('admin.html', links = links, n = len(links), dns_content=dns_content, dns_n = len(dns_content))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
