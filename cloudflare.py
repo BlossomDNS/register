@@ -46,7 +46,8 @@ class Cloudflare:
             "ttl": TTL,
             "proxied": PROXIED
         }
-        self.execute(dns_record_data=dns_record_data) 
+        return self.execute(dns_record_data=dns_record_data) 
+        
 
     def insert_CNAME_record(self, DNS_RECORD_NAME:str, DNS_RECORD_CONTENT: str, TTL:int = 1, PROXIED: bool = False):
         dns_record_data = {
@@ -56,30 +57,19 @@ class Cloudflare:
             "ttl": TTL,
             "proxied": PROXIED
         }
-        if self.execute(dns_record_data=dns_record_data) == 200:
-            print("SUCCESSFUL")
+        return self.execute(dns_record_data=dns_record_data)
     
     def delete(self, identifier):
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{identifier}"
         response = requests.delete(url, headers=self.headers)
 
-        if response.status_code == 200:
-            print("SUCCESSFULLY DELETED")
+        return response
     
-    def execute(self, dns_record_data) -> int:
+    def execute(self, dns_record_data): #for post
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
         response = requests.post(url, headers=self.headers, data=json.dumps(dns_record_data))
 
-        # Check the response
-        if response.status_code == 200:
-            print("DNS record added successfully.")
-            print("Response:", response.json())
-            return 200
-        else:
-            print("Failed to add DNS record.")
-            print("Status Code:", response.status_code)
-            print("Response:", response.text)
-            return -1
+        return response
         
     def update_json(dns_record):
         with open("subdomain.json", "r") as jsonFile:

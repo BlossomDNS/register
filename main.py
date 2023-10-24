@@ -32,7 +32,7 @@ def admin():
     return render_template('admin.html', links = links, n = len(links), dns_content=dns_content, dns_n = len(dns_content), account_id=cloudflare_account_id)
 
 @app.route('/control', methods=['GET', 'POST']) #admin site soon
-def control():
+def control(output:str = "N/A"):
     if not g.user:
         return redirect(url_for('login'))
     
@@ -53,9 +53,9 @@ def control():
 
         
         if data["type"] == "A":
-            cloudflare.insert_A_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"])
+            return render_template("control.html", output=cloudflare.insert_A_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"]).status_code)
         elif data["type"] == "CNAME":
-            cloudflare.insert_CNAME_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"])
+            return render_template("control.html", output=cloudflare.insert_CNAME_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"]).status_code)
         else:
             target_id = 0
 
@@ -63,9 +63,9 @@ def control():
                 if dns["name"] == data["dns_record"]:
                     target_id = dns["id"]
             
-            cloudflare.delete(identifier=target_id)
+            return render_template("control.html",output=cloudflare.delete(identifier=target_id).status_code)
     
-    return render_template("control.html")
+    return render_template("control.html", output=output)
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
