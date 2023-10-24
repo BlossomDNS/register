@@ -27,7 +27,7 @@ def admin():
 
     dns_content = cloudflare.getDNSrecords()
 
-    return render_template('admin.html', links = links, n = len(links), dns_content=dns_content, dns_n = len(dns_content))
+    return render_template('admin.html', links = links, n = len(links), dns_content=dns_content, dns_n = len(dns_content), account_id=cloudflare_account_id)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
