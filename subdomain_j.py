@@ -12,7 +12,6 @@ def setup() -> int:
     else:
         dict = {}
         for x in config.cloudflare_domain:
-            print(x)
             dict[x] = {}
         
         # Writing to sample.json
@@ -23,6 +22,4 @@ def setup() -> int:
 
 def retrieve_j():
     response = requests.get(config.github_subdomain_json)
-    print(json.loads(response.content))
-
-retrieve_j()
+    return response.content

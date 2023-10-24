@@ -57,8 +57,14 @@ class Cloudflare:
             "proxied": PROXIED
         }
         if self.execute(dns_record_data=dns_record_data) == 200:
-            self.update_json(dns_record_data)
-        
+            print("SUCCESSFUL")
+    
+    def delete(self, identifier):
+        url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{identifier}"
+        response = requests.delete(url, headers=self.headers)
+
+        if response.status_code == 200:
+            print("SUCCESSFULLY DELETED")
     
     def execute(self, dns_record_data) -> int:
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"

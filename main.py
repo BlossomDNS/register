@@ -37,17 +37,33 @@ def control():
         return redirect(url_for('login'))
     
     if request.method == "POST":
-        print("CAUGHT")
         print(request.form)
+        data = {}
+        data["dns_record"] = request.form["dns_record"]
 
-        data = request.form
+        try:
+            data["type"] = request.form["type"]
+        except:
+            data["type"] = None
+
+        try:
+            data["dns_content"] = request.form["dns_content"]
+        except:
+            data["dns_content"] = None
+
+        
         if data["type"] == "A":
             cloudflare.insert_A_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"])
         elif data["type"] == "CNAME":
             cloudflare.insert_CNAME_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"])
-        elif (data["type"] == None) and (data["dns_content"] == None): #delete
-            cloudflare.getDNSrecords
-            print("test")
+        else:
+            target_id = 0
+
+            for dns in cloudflare.getDNSrecords():
+                if dns["name"] == data["dns_record"]:
+                    target_id = dns["id"]
+            
+            cloudflare.delete(identifier=target_id)
     
     return render_template("control.html")
     
