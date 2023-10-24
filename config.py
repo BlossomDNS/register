@@ -1,5 +1,6 @@
 #github
 github_repo = "LunesDomainProject/register"
+github_subdomain_json = f"https://raw.githubusercontent.com/{github_repo}/main/subdomain.json"
 #cloudflare
 cloudflare_api_token = ""
 cloudflare_account_id = ""
