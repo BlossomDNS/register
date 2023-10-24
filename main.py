@@ -27,7 +27,7 @@ def admin():
         return redirect(url_for('login'))
 
     links = [{"title":pull["title"], "url": pull['html_url'], "date": datetime.strptime(pull['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d")} for pull in get_pr_date()]
-    dns_content = cloudflare.getDNSrecords()
+    dns_content = [{"type":pull["type"], "name":pull["name"],"content":pull["content"],"proxied":pull["proxied"], "ttl":pull["ttl"]} for pull in cloudflare.getDNSrecords()]
 
     return render_template('admin.html', links = links, n = len(links), dns_content=dns_content, dns_n = len(dns_content), account_id=cloudflare_account_id)
 
@@ -38,7 +38,16 @@ def control():
     
     if request.method == "POST":
         print("CAUGHT")
-        print(request.form())
+        print(request.form)
+
+        data = request.form
+        if data["type"] == "A":
+            cloudflare.insert_A_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"])
+        elif data["type"] == "CNAME":
+            cloudflare.insert_CNAME_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"])
+        elif (data["type"] == None) and (data["dns_content"] == None): #delete
+            cloudflare.getDNSrecords
+            print("test")
     
     return render_template("control.html")
     

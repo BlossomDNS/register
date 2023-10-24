@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-bs-theme="light" lang="en" style="/*justify-content: center;*//*display: flex;*/">
+<html data-bs-theme="light" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -7,57 +7,28 @@
     <title>Untitled</title>
     <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/css/bootstrap.min.css') }}">
     <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/js/bootstrap.min.js') }}">
-    <!-- <link rel="stylesheet" href="assets/css/Roboto.css"> -->
-    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/Roboto.css') }}">
-    <!-- <link rel="stylesheet" href="assets/css/Material-Inputs-style.css"> -->
-    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/Material-Inputs-style.css') }}">    
-    <!--<link rel="stylesheet" href="assets/css/Material-Inputs.css"> -->
-    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/Material-Inputs.css') }}">
+
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/Google-Style-Login-.css') }}">
 </head>
 
-<body style="/*justify-content: center;*//*display: flex;*/">
-    <div>
-        <div class="row">
-            <div class="col-md-4">
-                <section class="card">
-                    <h1>A Record</h1>
-                    <form, method="POST">
-                        <div class="md-input-group">
-                            <p style="margin-bottom: 0px;font-size: 18px;">Subdomain (<em><span style="text-decoration: underline;">this</span>.domain.com)</em></p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" name="name_A">
-                        </div>
-                        <div class="md-input-group">
-                            <p style="margin-bottom: 0px;font-size: 18px;">Content</p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" name="content_A">
-                        </div>
-                    </form><button method = "POST", class="btn btn-primary d-block md-btn w-100" type="button">Update Cloudflare</button>
-                </section>
-            </div>
-            <div class="col-md-4">
-                <section class="card">
-                    <h1>CNAME Record</h1>
-                    <form class="form-signin", method="POST">
-                        <div class="md-input-group">
-                            <p style="margin-bottom: 0px;font-size: 18px;">Subdomain (<em><span style="text-decoration: underline;">this</span>.domain.com)</em></p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" name="name_CNAME">
-                        </div>
-                        <div class="md-input-group">
-                            <p style="margin-bottom: 0px;font-size: 18px;">Content</p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" content="content_CNAME">
-                        </div>
-                    </form><button class="btn btn-primary d-block md-btn w-100" type="submit">Update Cloudflare</button>
-                </section>
-            </div>
-            <div class="col-md-4">
-                <section class="card">
-                    <h1>Delete Record</h1>
-                    <form, method="POST">
-                        <div class="md-input-group">
-                            <p style="margin-bottom: 0px;font-size: 18px;">Subdomain (<em><span style="text-decoration: underline;">this</span>.domain.com)</em></p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" name="name_del">
-                        </div>
-                    </form><button class="btn btn-primary d-block md-btn w-100" type="button">Delete A/CNAME Record</button>
-                </section>
-            </div>
-        </div>
+<body>
+    <div class="login-card">
+        <p class="profile-name-card">Create/Modify Record</p>
+        <form class="form-signin", method="POST"><span class="reauth-email"> </span>
+            <input class="form-control" type="text" name="type" required="" placeholder="&quot;A&quot; or &quot;CNAME&quot;" autofocus="">
+            <input class="form-control" type="text" name="dns_record"  required="" placeholder="DNS Record Name" autofocus="">
+            <input class="form-control" type="text" name ="dns_content" required="" placeholder="DNS Record Content">
+            <div class="checkbox"></div><button class="btn btn-primary btn-lg d-block btn-signin w-100" type="submit">Create/Modify</button>
+        </form>
+    </div>
+    <div class="login-card">
+        <p class="profile-name-card">Delete Record</p>
+        <form class="form-signin", method="POST"><span class="reauth-email"> </span>
+            <input class="form-control" type="text" name="dns_record" required="" placeholder="DNS Record Name" autofocus="">
+            <div class="checkbox"></div><button class="btn btn-primary btn-lg d-block btn-signin w-100" type="submit">Delete</button>
+        </form>
     </div>
     <script src="static/styles/bootstrap/js/bootstrap.min.js"></script>
-    <script src="static/js/Material-Inputs-material-input.js"></script>
 </body>
 
 </html>

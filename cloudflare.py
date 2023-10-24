@@ -30,8 +30,8 @@ class Cloudflare:
         response = requests.get(url, headers=self.headers)
 
         if response.status_code == 200:
-            content = json.loads(response.content)["result"]
-            return [{"type":pull["type"], "name":pull["name"],"content":pull["content"],"proxied":pull["proxied"], "ttl":pull["ttl"]} for pull in content]
+            return json.loads(response.content)["result"]
+            #return [{"type":pull["type"], "name":pull["name"],"content":pull["content"],"proxied":pull["proxied"], "ttl":pull["ttl"]} for pull in content]
         else:
             print("DIDN'T GET DNS RECORDS")
 
