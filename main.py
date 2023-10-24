@@ -2,6 +2,9 @@ from flask import Flask, g, redirect, render_template, request,session, url_for
 from admins import *
 from github import *
 from cloudflare import *
+import setup
+
+setup.setup()
 
 app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
