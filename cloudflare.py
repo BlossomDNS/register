@@ -11,6 +11,7 @@ Sending requests to cloudflare
 import requests
 import json
 from cloudflare import *
+from config import *
 
 class Cloudflare:
     def __init__(self, api_token, account_id, zone_id):
@@ -25,7 +26,9 @@ class Cloudflare:
     
     def getDNSrecords(self):
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
-        response = requests.post(url, headers=self.headers)
+
+        response = requests.get(url, headers=self.headers)
+
         if response.status_code == 200:
             print(response.content)
         else:
@@ -82,6 +85,7 @@ class Cloudflare:
         
 
 
-#cloudflare = Cloudflare(api_token=cloudflare_api_token,account_id=cloudflare_account_id,zone_id=cloudflare_zone_id)
+cloudflare = Cloudflare(api_token=cloudflare_api_token,account_id=cloudflare_account_id,zone_id=cloudflare_zone_id)
+print(cloudflare.getDNSrecords())
 #inserts A_record
 #cloudflare.insert_A_record(DNS_RECORD_NAME=cloudflare_url, DNS_RECORD_CONTENT="test."+cloudflare_url)
