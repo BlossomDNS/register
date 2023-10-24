@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en" style="/*justify-content: center;*//*display: flex;*/">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Untitled</title>
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/css/bootstrap.min.css') }}">
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/js/bootstrap.min.js') }}">
+    <!-- <link rel="stylesheet" href="assets/css/Roboto.css"> -->
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/Roboto.css') }}">
+    <!-- <link rel="stylesheet" href="assets/css/Material-Inputs-style.css"> -->
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/Material-Inputs-style.css') }}">    
+    <!--<link rel="stylesheet" href="assets/css/Material-Inputs.css"> -->
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/Material-Inputs.css') }}">
+</head>
+
+<body style="/*justify-content: center;*//*display: flex;*/">
+    <div>
+        <div class="row">
+            <div class="col-md-4">
+                <section class="card">
+                    <h1>A Record</h1>
+                    <form>
+                        <div class="md-input-group">
+                            <p style="margin-bottom: 0px;font-size: 18px;">Subdomain (<em><span style="text-decoration: underline;">this</span>.domain.com)</em></p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" name="name_A">
+                        </div>
+                        <div class="md-input-group">
+                            <p style="margin-bottom: 0px;font-size: 18px;">Content</p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" name="content_A">
+                        </div>
+                    </form><button class="btn btn-primary d-block md-btn w-100" type="button">Update Cloudflare</button>
+                </section>
+            </div>
+            <div class="col-md-4">
+                <section class="card">
+                    <h1>CNAME Record</h1>
+                    <form>
+                        <div class="md-input-group">
+                            <p style="margin-bottom: 0px;font-size: 18px;">Subdomain (<em><span style="text-decoration: underline;">this</span>.domain.com)</em></p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" name="name_CNAME">
+                        </div>
+                        <div class="md-input-group">
+                            <p style="margin-bottom: 0px;font-size: 18px;">Content</p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" content="content_CNAME">
+                        </div>
+                    </form><button class="btn btn-primary d-block md-btn w-100" type="button">Update Cloudflare</button>
+                </section>
+            </div>
+            <div class="col-md-4">
+                <section class="card">
+                    <h1>Delete Record</h1>
+                    <form>
+                        <div class="md-input-group">
+                            <p style="margin-bottom: 0px;font-size: 18px;">Subdomain (<em><span style="text-decoration: underline;">this</span>.domain.com)</em></p><input class="form-control md-input" type="text" style="padding-top: 0px;background: #ffe2e2;" name="name_del">
+                        </div>
+                    </form><button class="btn btn-primary d-block md-btn w-100" type="button">Delete A/CNAME Record</button>
+                </section>
+            </div>
+        </div>
+    </div>
+    <script src="static/styles/bootstrap/js/bootstrap.min.js"></script>
+    <script src="static/js/Material-Inputs-material-input.js"></script>
+</body>
+
+</html>

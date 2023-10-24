@@ -1,0 +1,12 @@
+body {
+  padding: 20px;
+}
+
+.btn.btn-primary.btn-block {
+  margin-top: 40px;
+}
+
+section form {
+  min-height: 150px;
+}
+

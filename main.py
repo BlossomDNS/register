@@ -29,6 +29,13 @@ def admin():
 
     return render_template('admin.html', links = links, n = len(links), dns_content=dns_content, dns_n = len(dns_content), account_id=cloudflare_account_id)
 
+@app.route('/control', methods=['GET', 'POST']) #admin site soon
+def control():
+    if not g.user:
+        return redirect(url_for('login'))
+    
+    return render_template("control.html")
+    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
