@@ -21,8 +21,12 @@ def before_request():
 def admin():
     if not g.user:
         return redirect(url_for('login'))
+    
+    date_format = "%Y-%m-%dT%H:%M:%SZ"
+    pulls_data = get_pr_date()
+    links = [{"title":pull["title"], "url": pull['html_url'], "date": datetime.strptime(pull['created_at'], date_format).strftime("%Y-%m-%d")} for pull in pulls_data]
 
-    return render_template('admin.html')
+    return render_template('admin.html', links = links, n = len(links))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
