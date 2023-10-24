@@ -1,8 +1,10 @@
 import os.path
+
+import requests
 import config
 import json 
 
-#this code has to do with setting up server for first time
+#code that deals with the subdomain.json file
 
 def setup() -> int:
     if os.path.exists("subdomains.json"):
@@ -17,3 +19,10 @@ def setup() -> int:
         with open("subdomain.json", "w") as outfile:
             json.dump(dict, outfile, indent=4)
         return 0
+
+
+def retrieve_j():
+    response = requests.get(config.github_subdomain_json)
+    print(json.loads(response.content))
+
+retrieve_j()

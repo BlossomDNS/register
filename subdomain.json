@@ -1,4 +1,10 @@
 {
-    "example.com": {},
+    "example.com": {
+        "subdomain": {
+            "content":"target site",
+            "type":"A/CNAME",
+            "github_username":"your username"
+        }
+    },
     "test.com": {}
 }
