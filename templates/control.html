@@ -12,13 +12,19 @@
 </head>
 
 <body>
+    <div class="login-card" style="margin-top: 30px;">
+        <form class="form-signin"><span class="reauth-email"> </span>
+            <a class="btn btn-primary btn-lg d-block btn-signin w-100" role="button" href="/admin"><i class="fas fa-download fa-sm text-white-50"></i>&nbsp;Admin Panel</a>
+        </form>
+    </div>
     <div class="login-card">
         <p class="profile-name-card">Create/Modify Record</p>
         <form class="form-signin", method="POST"><span class="reauth-email"> </span>
             <input class="form-control" type="text" name="type" required="" placeholder="&quot;A&quot; or &quot;CNAME&quot;" autofocus="">
             <input class="form-control" type="text" name="dns_record"  required="" placeholder="DNS Record Name" autofocus="">
             <input class="form-control" type="text" name ="dns_content" required="" placeholder="DNS Record Content">
-            <div class="checkbox"></div><button class="btn btn-primary btn-lg d-block btn-signin w-100" type="submit">Create/Modify</button>
+            <div class="checkbox"></div>
+            <button class="btn btn-primary btn-lg d-block btn-signin w-100" type="submit">Create/Modify</button>
         </form>
     </div>
     <div class="login-card">
