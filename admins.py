@@ -1,6 +1,3 @@
-emails = ["test@123.com"]
-passwords = ["test"]
-
 #Admin accounts
 class Admin:
     def __init__(self, username, password, id):
