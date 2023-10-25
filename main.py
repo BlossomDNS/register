@@ -40,16 +40,8 @@ def control(output:str = "N/A"):
         print(request.form)
         data = {}
         data["dns_record"] = request.form["dns_record"]
-
-        try:
-            data["type"] = request.form["type"]
-        except:
-            data["type"] = None
-
-        try:
-            data["dns_content"] = request.form["dns_content"]
-        except:
-            data["dns_content"] = None
+        data["type"] = request.form.get("type", None)
+        data["dns_content"] = request.form.get("dns_content", None)
 
         
         if data["type"] == "A":
@@ -57,13 +49,12 @@ def control(output:str = "N/A"):
         elif data["type"] == "CNAME":
             return render_template("control.html", output=cloudflare.insert_CNAME_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"]).status_code)
         else:
-            target_id = 0
-
-            for dns in cloudflare.getDNSrecords():
-                if dns["name"] == data["dns_record"]:
-                    target_id = dns["id"]
+            target_id = next((dns["id"] for dns in cloudflare.getDNSrecords() if dns["name"] == data["dns_record"]), None)
             
-            return render_template("control.html",output=cloudflare.delete(identifier=target_id).status_code)
+            if target_id == None:
+                return render_template("control.html", output="Cannot find dns_record.")
+            else:
+                return render_template("control.html",output=cloudflare.delete(identifier=target_id).status_code)
     
     return render_template("control.html", output=output)
     
