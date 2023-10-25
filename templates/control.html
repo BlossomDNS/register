@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Untitled</title>
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/css/bootstrap.min.css') }}">
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/js/bootstrap.min.js') }}">
+
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/Google-Style-Login-.css') }}">
+</head>
+
+<body>
+    <div class="login-card" style="margin-top: 30px;">
+        <form class="form-signin"><span class="reauth-email"> </span>
+            <a class="btn btn-primary btn-lg d-block btn-signin w-100" role="button" href="/admin"><i class="fas fa-download fa-sm text-white-50"></i>&nbsp;Admin Panel</a>
+        </form>
+    </div>
+    <div class="login-card">
+        <p class="profile-name-card">Create/Modify Record</p>
+        <form class="form-signin", method="POST"><span class="reauth-email"> </span>
+            <input class="form-control" type="text" name="type" required="" placeholder="&quot;A&quot; or &quot;CNAME&quot;" autofocus="">
+            <input class="form-control" type="text" name="dns_record"  required="" placeholder="DNS Record Name" autofocus="">
+            <input class="form-control" type="text" name ="dns_content" required="" placeholder="DNS Record Content">
+            <div class="checkbox"></div>
+            <button class="btn btn-primary btn-lg d-block btn-signin w-100" type="submit">Create/Modify</button>
+        </form>
+    </div>
+    <div class="login-card">
+        <p class="profile-name-card">Delete Record</p>
+        <form class="form-signin", method="POST"><span class="reauth-email"> </span>
+            <input class="form-control" type="text" name="dns_record" required="" placeholder="DNS Record Name" autofocus="">
+            <div class="checkbox"></div><button class="btn btn-primary btn-lg d-block btn-signin w-100" type="submit">Delete</button>
+        </form>
+    </div>
+    <div class="login-card">
+        <p class="profile-name-card">Output</p>
+        <p class="profile-name-card">{{ output }}</p>
+    </div>
+    <script src="static/styles/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>

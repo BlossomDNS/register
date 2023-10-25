@@ -2,9 +2,13 @@ from flask import Flask, g, redirect, render_template, request,session, url_for
 from admins import *
 from github import *
 from cloudflare import *
+import subdomain_j
+
+subdomain_j.setup()
 
 app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
+cloudflare = Cloudflare(api_token=cloudflare_api_token,account_id=cloudflare_account_id,zone_id=cloudflare_zone_id)
 
 load_github_sites(app=app) #loads sites from github api
 
@@ -21,13 +25,39 @@ def before_request():
 def admin():
     if not g.user:
         return redirect(url_for('login'))
+
+    links = [{"title":pull["title"], "url": pull['html_url'], "date": datetime.strptime(pull['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d"), "user":pull["user"]["login"]} for pull in get_pr_date()]
+    dns_content = [{"type":pull["type"], "name":pull["name"],"content":pull["content"],"proxied":pull["proxied"], "ttl":pull["ttl"]} for pull in cloudflare.getDNSrecords()]
+
+    return render_template('admin.html', links = links, n = len(links), dns_content=dns_content, dns_n = len(dns_content), account_id=cloudflare_account_id)
+
+@app.route('/control', methods=['GET', 'POST']) #admin site soon
+def control(output:str = "N/A"):
+    if not g.user:
+        return redirect(url_for('login'))
     
-    date_format = "%Y-%m-%dT%H:%M:%SZ"
-    pulls_data = get_pr_date()
-    links = [{"title":pull["title"], "url": pull['html_url'], "date": datetime.strptime(pull['created_at'], date_format).strftime("%Y-%m-%d")} for pull in pulls_data]
+    if request.method == "POST":
+        print(request.form)
+        data = {}
+        data["dns_record"] = request.form["dns_record"]
+        data["type"] = request.form.get("type", None)
+        data["dns_content"] = request.form.get("dns_content", None)
 
-    return render_template('admin.html', links = links, n = len(links))
-
+        
+        if data["type"] == "A":
+            return render_template("control.html", output=cloudflare.insert_A_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"]).status_code)
+        elif data["type"] == "CNAME":
+            return render_template("control.html", output=cloudflare.insert_CNAME_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"]).status_code)
+        else:
+            target_id = next((dns["id"] for dns in cloudflare.getDNSrecords() if dns["name"] == data["dns_record"]), None)
+            
+            if target_id == None:
+                return render_template("control.html", output="Cannot find dns_record.")
+            else:
+                return render_template("control.html",output=cloudflare.delete(identifier=target_id).status_code)
+    
+    return render_template("control.html", output=output)
+    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
