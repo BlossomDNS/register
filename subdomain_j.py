@@ -31,18 +31,24 @@ def retrieve_j() -> dict:
 
 
 def check(domain_target: str) -> str:
-    library = retrieve_j
+    library = retrieve_j()
     if library != None:
 
         domain = domain_target.split(".")
-        if domain != 3:
+        if len(domain) != 3:
             return "Bad Input"
         
         subdomain = domain[0]
-        content = library[domain[1]+"."+domain[2]][subdomain[0]]
+        try:
+            content = library[domain[1]+"."+domain[2]][subdomain]
+        except:
+            return "Not Taken."
+        
         if content == None:
             return "No one owns it"
         else:
             return "The user " + content["owner"] + " owns it."
 
     return None
+
+print(check("test.example.com"))
