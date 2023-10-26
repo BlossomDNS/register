@@ -1,9 +1,14 @@
+#Constants Variables
+
 #github
-github_repo = "BlossomDNS/register"
-github_subdomain_json = f"https://raw.githubusercontent.com/{github_repo}/main/subdomain.json"
+GITHUB_REPO = "BlossomDNS/register"
+GITHUB_SUBDOMAIN_JSON = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/subdomain.json"
 #cloudflare
-cloudflare_api_token = ""
-cloudflare_account_id = ""
-cloudflare_zone_id = ""
+CLOUDFLARE_API_TOKEN = ""
+CLOUDFLARE_ACCOUNT_ID = ""
+CLOUDFLARE_ZONE_ID = ""
+#DNS Records publishing
+PROXIED_ON = False
+TTL_INT = 1
 #domain you are giving subdomains away
-cloudflare_domain = ["example.com","test.com"]
+CLOUDFLARE_DOMAIN = ["example.com","test.com"]

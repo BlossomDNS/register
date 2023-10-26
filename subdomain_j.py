@@ -11,7 +11,7 @@ def setup() -> int:
         return 0
     else:
         dict = {}
-        for x in config.cloudflare_domain:
+        for x in config.CLOUDFLARE_DOMAIN:
             dict[x] = {}
         
         # Writing to sample.json
@@ -22,7 +22,7 @@ def setup() -> int:
 
 def retrieve_j() -> dict:
     try:
-        response = requests.get(config.github_subdomain_json)
+        response = requests.get(config.GITHUB_SUBDOMAIN_JSON)
         content = json.loads(response.content)
         return content
     except:

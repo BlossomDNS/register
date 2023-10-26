@@ -8,7 +8,7 @@ subdomain_j.setup()
 
 app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
-cloudflare = Cloudflare(api_token=cloudflare_api_token,account_id=cloudflare_account_id,zone_id=cloudflare_zone_id)
+cloudflare = Cloudflare(api_token=CLOUDFLARE_API_TOKEN,account_id=CLOUDFLARE_ACCOUNT_ID,zone_id=CLOUDFLARE_ZONE_ID)
 
 load_github_sites(app=app) #loads sites from github api
 
@@ -29,7 +29,7 @@ def admin():
     links = [{"title":pull["title"], "url": pull['html_url'], "date": datetime.strptime(pull['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d"), "user":pull["user"]["login"]} for pull in get_pr_date()]
     dns_content = [{"type":pull["type"], "name":pull["name"],"content":pull["content"],"proxied":pull["proxied"], "ttl":pull["ttl"]} for pull in cloudflare.getDNSrecords()]
 
-    return render_template('admin.html', links = links, n = len(links), dns_content=dns_content, dns_n = len(dns_content), account_id=cloudflare_account_id)
+    return render_template('admin.html', links = links, n = len(links), dns_content=dns_content, dns_n = len(dns_content), account_id=CLOUDFLARE_ACCOUNT_ID)
 
 @app.route('/control', methods=['GET', 'POST']) #admin site soon
 def control(output:str = "N/A"):
