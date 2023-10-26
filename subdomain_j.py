@@ -32,20 +32,19 @@ def retrieve_j() -> dict:
 
 def check(domain_target: str) -> str:
     library = retrieve_j()
-    if library != None:
+    if library == None:
+        return "Error in Retrieving Subdomain.json"
 
-        domain = domain_target.split(".")
-        if len(domain) != 3:
-            return "Bad Input"
-        
-        subdomain = domain[0]
-        try:
-            content = library[domain[1]+"."+domain[2]][subdomain]
-        except:
-            return "Not Taken."
+    domain = domain_target.split(".")
+    if len(domain) != 3:
+        return "Bad Input"
 
-        return "The user " + content["owner"] + " owns it."
+    try:
+        content = library[domain[1]+"."+domain[2]][domain[0]]
+    except:
+        return "Not Taken."
 
-    return "Error with Subdomain.json not founded"
+    return "The user " + content["owner"] + " owns it."
+
 
 print(check("test.example.com"))
