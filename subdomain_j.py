@@ -22,4 +22,6 @@ def setup() -> int:
 
 def retrieve_j():
     response = requests.get(config.github_subdomain_json)
-    return response.content
+    content = json.loads(response.content)
+    print(content)
+
