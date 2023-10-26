@@ -1,5 +1,6 @@
 #github
-github_subdomain_json = f"https://raw.githubusercontent.com/BlossomDNS/register/main/subdomain.json"
+github_repo = "BlossomDNS/register"
+github_subdomain_json = f"https://raw.githubusercontent.com/{github_repo}/main/subdomain.json"
 #cloudflare
 cloudflare_api_token = ""
 cloudflare_account_id = ""
