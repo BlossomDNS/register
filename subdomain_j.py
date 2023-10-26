@@ -20,8 +20,29 @@ def setup() -> int:
         return 0
 
 
-def retrieve_j():
-    response = requests.get(config.github_subdomain_json)
-    content = json.loads(response.content)
-    print(content)
+def retrieve_j() -> dict:
+    try:
+        response = requests.get(config.github_subdomain_json)
+        content = json.loads(response.content)
+        return content
+    except:
+        return None
 
+
+
+def check(domain_target: str) -> str:
+    library = retrieve_j
+    if library != None:
+
+        domain = domain_target.split(".")
+        if domain != 3:
+            return "Bad Input"
+        
+        subdomain = domain[0]
+        content = library[domain[1]+"."+domain[2]][subdomain[0]]
+        if content == None:
+            return "No one owns it"
+        else:
+            return "The user " + content["owner"] + " owns it."
+
+    return None
