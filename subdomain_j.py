@@ -29,7 +29,6 @@ def retrieve_j() -> dict:
         return None
 
 
-
 def check(domain_target: str) -> str:
     library = retrieve_j()
     if library == None:

@@ -17,7 +17,7 @@ def before_request():
     g.user = None
 
     if 'user_id' in session:
-        user = [x for x in admin_accts if x.id == session['user_id']][0]
+        user = [x for x in ADMIN_ACCTS if x.id == session['user_id']][0]
         g.user = user
 
 
@@ -66,7 +66,7 @@ def login():
         email = request.form["email"]
         pw = request.form["password"]
 
-        user = [x for x in admin_accts if x.username == email][0]
+        user = [x for x in ADMIN_ACCTS if x.username == email][0]
         if user and user.password == pw:
             session['user_id'] = user.id
             return redirect(url_for('admin'))
@@ -77,3 +77,5 @@ def login():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
+
+

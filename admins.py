@@ -4,7 +4,3 @@ class Admin:
         self.id = id
         self.username = username
         self.password = password
-
-
-admin_accts = []
-admin_accts.append(Admin(id=1, username="test@test",password="test"))

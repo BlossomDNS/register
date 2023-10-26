@@ -12,3 +12,9 @@ PROXIED_ON = False
 TTL_INT = 1
 #domain you are giving subdomains away
 CLOUDFLARE_DOMAIN = ["example.com","test.com"]
+#admin
+import admins
+ADMIN_ACCTS = [
+                admins.Admin(id=1, username="test@test", password="test"), 
+                admins.Admin(id=2, usernmae="test", password="test")
+               ]
