@@ -43,12 +43,9 @@ def check(domain_target: str) -> str:
             content = library[domain[1]+"."+domain[2]][subdomain]
         except:
             return "Not Taken."
-        
-        if content == None:
-            return "No one owns it"
-        else:
-            return "The user " + content["owner"] + " owns it."
 
-    return None
+        return "The user " + content["owner"] + " owns it."
+
+    return "Error with Subdomain.json not founded"
 
 print(check("test.example.com"))
