@@ -18,3 +18,6 @@ ADMIN_ACCTS = [
                 admins.Admin(id=1, username="test@test", password="test"), 
                 admins.Admin(id=2, username="test", password="test")
                ]
+#git auth
+CLIENT_SECRET = ""
+CLIENT_ID = ""
