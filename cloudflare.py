@@ -38,25 +38,26 @@ class Cloudflare:
         return 
     
     #Most likely we won't use this. (clueless)
-    def insert_A_record(self, DNS_RECORD_NAME:str, DNS_RECORD_CONTENT: str, TTL:int = TTL_INT, PROXIED: bool = PROXIED_ON):
+    def insert_A_record(self, DNS_RECORD_NAME:str, DNS_RECORD_CONTENT: str, TTL:int = TTL_INT, PROXIED: bool = PROXIED_ON, comment:str = None):
         dns_record_data = {
             "type": "A",
             "name": DNS_RECORD_NAME,
             "content": DNS_RECORD_CONTENT,
             "ttl": TTL,
             "proxied": PROXIED,
-            "comment": "Added on:"
+            "comment": comment
         }
         return self.execute(dns_record_data=dns_record_data) 
         
 
-    def insert_CNAME_record(self, DNS_RECORD_NAME:str, DNS_RECORD_CONTENT: str, TTL:int = TTL_INT, PROXIED: bool = PROXIED_ON):
+    def insert_CNAME_record(self, DNS_RECORD_NAME:str, DNS_RECORD_CONTENT: str, TTL:int = TTL_INT, PROXIED: bool = PROXIED_ON, comment:str = None):
         dns_record_data = {
             "type": "CNAME",
             "name": DNS_RECORD_NAME, #the ___.site.com
             "content": DNS_RECORD_CONTENT, # target site
             "ttl": TTL,
-            "proxied": PROXIED
+            "proxied": PROXIED,
+            "comment": comment
         }
         return self.execute(dns_record_data=dns_record_data)
     

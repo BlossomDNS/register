@@ -15,6 +15,7 @@ load_github_sites(app=app) #loads sites from github api
 @app.before_request
 def before_request():
     g.user = None
+    
 
     if 'user_id' in session:
         user = [x for x in ADMIN_ACCTS if x.id == session['user_id']][0]
@@ -37,17 +38,15 @@ def control(output:str = "N/A"):
         return redirect(url_for('login'))
     
     if request.method == "POST":
-        print(request.form)
         data = {}
         data["dns_record"] = request.form["dns_record"]
         data["type"] = request.form.get("type", None)
         data["dns_content"] = request.form.get("dns_content", None)
-
         
         if data["type"] == "A":
-            return render_template("control.html", output=cloudflare.insert_A_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"]).status_code)
+            return render_template("control.html", output=cloudflare.insert_A_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"], comment="Responsible Person:"+g.user.username).status_code)
         elif data["type"] == "CNAME":
-            return render_template("control.html", output=cloudflare.insert_CNAME_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"]).status_code)
+            return render_template("control.html", output=cloudflare.insert_CNAME_record(DNS_RECORD_NAME=data["dns_record"], DNS_RECORD_CONTENT=data["dns_content"], comment="Responsible Person:"+g.user.username).status_code)
         else:
             target_id = next((dns["id"] for dns in cloudflare.getDNSrecords() if dns["name"] == data["dns_record"]), None)
             
