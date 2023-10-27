@@ -12,18 +12,18 @@ from datetime import datetime
 from config import GITHUB_REPO
 
 
-# def get_pr_date() -> list:
-#     url = f'https://api.github.com/repos/{GITHUB_REPO}/pulls'
+def get_pr_date() -> list:
+    url = f'https://api.github.com/repos/{GITHUB_REPO}/pulls'
 
-#     response = requests.get(url)
-#     print(response.text)
+    response = requests.get(url)
 
-#     if response.status_code == 200:
-#         pulls_data = response.json()
-#         return pulls_data
 
-#     else:
-#         print(f"Request failed with status code {response.status_code}")
+    if response.status_code == 200:
+        pulls_data = response.json()
+        return pulls_data
+
+    else:
+        print(f"Request failed with status code {response.status_code}")
 
 
 def load_github_sites(app): #for main.py

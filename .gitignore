@@ -5,4 +5,3 @@ __site
 config.py
 
 __pycache__
-venv/*
