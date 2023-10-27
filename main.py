@@ -13,9 +13,9 @@ cloudflare = Cloudflare(api_token=CLOUDFLARE_API_TOKEN,account_id=CLOUDFLARE_ACC
 #load_github_sites(app=app) #loads sites from github api
 
 
-
-
-
+@app.route('/')
+def index():
+    return render_template('home.html')
 
 
 # ADMIN WEBSITE CODE

@@ -1,0 +1,50 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url("https://getwallpapers.com/wallpaper/full/f/9/d/508720.jpg");
+}
+.jumbotron {
+    text-align: center;
+    color: whitesmoke;
+    font-weight: 300;
+}
+.jumbotron hr {
+    border-bottom: none;
+    width: 500px;
+    margin: 0 auto;
+    opacity: 0.9;
+}
+.navbar {
+    background-color: transparent !important;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+}
+.navbar-nav {
+    justify-content: center;
+    margin-left:530px;
+    gap: 10px;
+}
+.nav-link {
+    color: white !important;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+}
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: white;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-link:hover::after,
+.nav-link:focus::after {
+    width: 100%;
+}

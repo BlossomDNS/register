@@ -16,5 +16,5 @@ CLOUDFLARE_DOMAIN = ["example.com","test.com"]
 import admins
 ADMIN_ACCTS = [
                 admins.Admin(id=1, username="test@test", password="test"), 
-                admins.Admin(id=2, usernmae="test", password="test")
+                admins.Admin(id=2, username="test", password="test")
                ]
