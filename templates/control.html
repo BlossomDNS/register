@@ -23,6 +23,11 @@
             <input class="form-control" type="text" name="type" required="" placeholder="&quot;A&quot; or &quot;CNAME&quot;" autofocus="">
             <input class="form-control" type="text" name="dns_record"  required="" placeholder="DNS Record Name" autofocus="">
             <input class="form-control" type="text" name ="dns_content" required="" placeholder="DNS Record Content">
+            <select name="url">
+                {%for url in urls%}
+                <option value={{url.url}}>{{url.url}}</option>
+                {%endfor%}
+            </select>
             <div class="checkbox"></div>
             <button class="btn btn-primary btn-lg d-block btn-signin w-100" type="submit">Create/Modify</button>
         </form>

@@ -71,7 +71,7 @@
                                     <div class="row align-items-center no-gutters">
                                         <div class="col me-2">
                                             <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>DNS Connections</span></div>
-                                            <div class="text-dark fw-bold h5 mb-0"><span>{{ dns_n }}</span></div>
+                                            
                                         </div>
                                         <div class="col-auto"><i class="fas fa-calendar fa-2x text-gray-300"></i></div>
                                     </div>
@@ -119,7 +119,7 @@
                                     <div class="row align-items-center no-gutters">
                                         <div class="col me-2">
                                             <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>Pending PRs</span></div>
-                                            <div class="text-dark fw-bold h5 mb-0"><span>{{ n }}</span></div>
+
                                         </div>
                                         <div class="col-auto"><i class="fas fa-comments fa-2x text-gray-300"></i></div>
                                     </div>
@@ -154,22 +154,18 @@
                                                     <th>Type</th>
                                                     <th>Name</th>
                                                     <th>Content</th>
-                                                    <th>TTL</th>
-                                                    <th>Proxy</th>
-                                                    <th>Action</th>
+                                                    <th>Proxied</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for dns in dns_content %}
+                                                {% for subdomain in subdomains%}
                                                 <tr>
-                                                    <td>{{ dns.type }}</td>
-                                                    <td>{{ dns.name }}</td>
-                                                    <td>{{ dns.content }}</td>
-                                                    <td>{{ dns.ttl }}</td>
-                                                    <td>{{ dns.proxied }}</td>
-                                                    <td><a href="/control">Click Here</a></td>
+                                                    <td>{{subdomain.type}}</td>
+                                                    <td>{{subdomain.name}}</td>
+                                                    <td>{{subdomain.content}}</td>
+                                                    <td>{{subdomain.proxied}}</td>
                                                 </tr>
-                                                {% endfor %}
+                                                {%endfor%}
                                             </tbody>
                                             <tfoot>
                                                 <tr></tr>
@@ -226,15 +222,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for link in links %}
-                                                <tr>
-                                                    <td>{{link.date}}</td>
-                                                    <td>{{link.title}}</td>
-                                                    <td><a href={{ link.url }} class="title">Link</a></td>
-                                                    <td>{{link.user}}</td>
-                                                    <td>N/A</td>
-                                                </tr>
-                                                {% endfor %}
+
                                             </tbody>
                                             <tfoot>
                                                 <tr></tr>
