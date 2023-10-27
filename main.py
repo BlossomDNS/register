@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
 cloudflare = Cloudflare(api_token=CLOUDFLARE_API_TOKEN,account_id=CLOUDFLARE_ACCOUNT_ID,zone_id=CLOUDFLARE_ZONE_ID)
 
-load_github_sites(app=app) #loads sites from github api
+#load_github_sites(app=app) #loads sites from github api
 
 @app.before_request
 def before_request():
