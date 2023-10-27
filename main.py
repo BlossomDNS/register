@@ -12,6 +12,13 @@ cloudflare = Cloudflare(api_token=CLOUDFLARE_API_TOKEN,account_id=CLOUDFLARE_ACC
 
 #load_github_sites(app=app) #loads sites from github api
 
+
+
+
+
+
+
+# ADMIN WEBSITE CODE
 @app.before_request
 def before_request():
     g.user = None
