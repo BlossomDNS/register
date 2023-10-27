@@ -44,6 +44,3 @@ def check(domain_target: str) -> str:
         return "Not Taken."
 
     return "The user " + content["owner"] + " owns it."
-
-
-print(check("test.example.com"))
