@@ -2,10 +2,13 @@ from flask import Flask, g, redirect, render_template, request,session, url_for
 from admins import *
 from github import *
 from cloudflare import *
-
+from flask_github import GitHub
 
 app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
+app.config['GITHUB_CLIENT_ID'] = CLIENT_ID
+app.config['GITHUB_CLIENT_SECRET'] = CLIENT_SECRET
+github = GitHub(app)
 
 cloudflare = {}
 for domain in CLOUDFLARE_DOMAINS:
@@ -18,6 +21,9 @@ for domain in CLOUDFLARE_DOMAINS:
 def index():
     return render_template('home.html')
 
+@app.route('/signin')
+def signin():
+    return github.authorize()
 
 # ADMIN WEBSITE CODE
 @app.before_request
