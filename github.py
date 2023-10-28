@@ -9,7 +9,7 @@ Contains github for github side of the program
 from flask import render_template
 import requests
 from datetime import datetime
-from config import GITHUB_REPO
+#from config import GITHUB_REPO
 
 
 # def get_pr_date() -> list:

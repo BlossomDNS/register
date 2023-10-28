@@ -47,8 +47,8 @@ def indexnormal():
     return render_template('home.html')
 
 @app.route('/claim')
-def claim():
-    return render_template("claim.html")
+def claim(error: str = ""):
+    return render_template("claim.html", error=error)
 
 # ADMIN WEBSITE CODE
 @app.before_request
