@@ -38,9 +38,9 @@ for domain in CLOUDFLARE_DOMAINS:
 
 #load_github_sites(app=app) #loads sites from github api
 
-
-
-
+@app.route("/datagrid")
+def datagrid():
+    return render_template("datagrid.html")
 
 @app.route('/')
 def indexnormal():
@@ -100,16 +100,16 @@ def dashboard():
     
     
     domains = use_database("SELECT subdomains from users where token = ?", (session['id'],))
-    user_subdomains = []
     print(domains)
     if domains[0] is None:
-        return render_template('dashboard.html', subdomains=None, account_id=CLOUDFLARE_ACCOUNT_ID, github_username=request.cookies.get("username"))
+        return render_template('dashboard.html', subdomains=[], account_id=CLOUDFLARE_ACCOUNT_ID, github_username=request.cookies.get("username"))
         
-    
+    user_subdomains = []
     for domain in domains[0].split("<>"):
         for possible_domain in all_sub_domains:
             if possible_domain['name'] == domain:
                 user_subdomains.append(possible_domain)
+    
     return render_template('dashboard.html', subdomains=user_subdomains, account_id=CLOUDFLARE_ACCOUNT_ID, github_username=request.cookies.get("username"))
 
 @app.route('/control', methods=['GET', 'POST']) #admin site soon
