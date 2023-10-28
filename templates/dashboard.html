@@ -158,7 +158,6 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {%if subdomains is not none %}
                                                 {% for subdomain in subdomains%}
                                                 <tr>
                                                     <td>{{subdomain.type}}</td>
@@ -167,7 +166,6 @@
                                                     <td>{{subdomain.proxied}}</td>
                                                 </tr>
                                                 {%endfor%}
-                                                {%endif%}
                                             </tbody>
                                             <tfoot>
                                                 <tr></tr>

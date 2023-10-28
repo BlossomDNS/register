@@ -2,20 +2,44 @@ from flask import Flask, g, redirect, render_template, request,session, url_for
 from admins import *
 from github import *
 from cloudflare import *
+import sqlite3
+from routes.authentication import * 
 
+connection = sqlite3.connect("database.db")
+
+connection.execute("CREATE TABLE IF NOT EXISTS users (token TEXT, username TEXT, subdomains TEXT)")
+connection.commit()
+connection.close()
+def use_database(query: str, values:tuple=None):
+    
+    connection = sqlite3.connect("database.db")
+    res = connection.execute(query, values)
+    returned_value = None
+    if "select" in query.lower():
+        returned_value = res.fetchone()
+    connection.commit()
+    connection.close()
+    return returned_value
 
 app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
+
+
+
 
 cloudflare = {}
 for domain in CLOUDFLARE_DOMAINS:
     cloudflare[domain['url']] = Cloudflare(api_token=CLOUDFLARE_API_TOKEN,account_id=CLOUDFLARE_ACCOUNT_ID,zone_id=domain['cloudflare_zone_id'])
 
+
 #load_github_sites(app=app) #loads sites from github api
 
 
+
+
+
 @app.route('/')
-def index():
+def indexnormal():
     return render_template('home.html')
 
 
@@ -42,6 +66,45 @@ def admin():
             subdomains.append({"name": ye['name'], "type": ye['type'], "content": ye['content'], "id": ye['id'], "proxied": ye['proxied']})
     return render_template('admin.html', subdomains=subdomains, account_id=CLOUDFLARE_ACCOUNT_ID)
 
+@app.route('/dashboard', methods=['GET', 'POST'])
+def dashboard():
+    if request.method == "POST":
+        data = {}
+        data["dns_record"] = request.form["dns_record"]
+        data["type"] = request.form.get("type")
+        data["url"] = request.form.get("url")
+        data["dns_content"] = request.form.get("dns_content")
+        subdomains = use_database("SELECT subdomains FROM users where token = ?", (session['id'],))
+        if data['type'].lower() == "a":
+            
+            use_database("UPDATE users SET subdomains = ? WHERE token = ? '", (f"{subdomains}<>{data['dns_record']}.{data['url']}", session['id'],))
+            cloudflare[data['url']].insert_A_record(data["dns_record"], data["dns_content"], PROXIED=False)
+        elif data['type'].lower() == "cname":
+            use_database("UPDATE users SET subdomains = ? WHERE token = ? '", (f"{subdomains}<>{data['dns_record']}.{data['url']}", session['id'],))
+            
+            cloudflare[data['url']].insert_CNAME_record(data["dns_record"], data["dns_content"], PROXIED=False)    
+        else:
+            return "wrong type"
+    all_sub_domains=[]
+    for all_domain in CLOUDFLARE_DOMAINS:
+        records = cloudflare[all_domain['url']].getDNSrecords()
+        for record in records:
+            all_sub_domains.append({"name": record['name'], "type": record['type'], "content": record['content'], "id": record['id'], "proxied": record['proxied']})
+    
+    
+    domains = use_database("SELECT subdomains from users where token = ?", (session['id'],))
+    user_subdomains = []
+    print(domains)
+    if domains[0] is None:
+        return render_template('admin.html', subdomains=None, account_id=CLOUDFLARE_ACCOUNT_ID)
+        
+    
+    for domain in domains[0].split("<>"):
+        for possible_domain in all_sub_domains:
+            if possible_domain['name'] == domain:
+                user_subdomains.append(possible_domain)
+    return render_template('admin.html', subdomains=user_subdomains, account_id=CLOUDFLARE_ACCOUNT_ID)
+
 @app.route('/control', methods=['GET', 'POST']) #admin site soon
 def control(output:str = "N/A"):
     if not g.user:
@@ -65,8 +128,8 @@ def control(output:str = "N/A"):
     
     return render_template("control.html", output=output, urls=CLOUDFLARE_DOMAINS)
     
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route('/loginadmin', methods=['GET', 'POST'])
+def loginadmin():
     if request.method == "POST":
         session.pop('user_id', None)
         
@@ -78,13 +141,14 @@ def login():
             session['user_id'] = user.id
             return redirect(url_for('admin'))
         
-        return redirect(url_for('login'))
+        return redirect(url_for('loginadmin'))
         
     return render_template("login.html")
 
 if __name__ == '__main__':
     #from waitress import serve
     #serve(app, host="0.0.0.0", port=8080)
+    app.register_blueprint(authentication)
     app.run(host='0.0.0.0')
 
 

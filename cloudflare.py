@@ -20,16 +20,18 @@ class Cloudflare:
         self.ZONE_ID = zone_id
 
         self.headers = {
-            "Authorization": f"Bearer {self.API_TOKEN}",
+            "Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}",
             "Content-Type": "application/json"
         }
     
     def getDNSrecords(self) -> list:
+        print(self.ZONE_ID)
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
 
         response = requests.get(url, headers=self.headers)
 
         if response.status_code == 200:
+            print(response.text)
             return json.loads(response.content)["result"]
             #return [{"type":pull["type"], "name":pull["name"],"content":pull["content"],"proxied":pull["proxied"], "ttl":pull["ttl"]} for pull in content]
         else:
