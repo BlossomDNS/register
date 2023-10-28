@@ -5,22 +5,9 @@ from github import *
 from cloudflare import *
 import sqlite3
 from routes.authentication import * 
+from data_sql import *
 
-connection = sqlite3.connect("database.db")
-
-connection.execute("CREATE TABLE IF NOT EXISTS users (token TEXT, username TEXT, subdomains TEXT)")
-connection.commit()
-connection.close()
-def use_database(query: str, values:tuple=None):
-    
-    connection = sqlite3.connect("database.db")
-    res = connection.execute(query, values)
-    returned_value = None
-    if "select" in query.lower():
-        returned_value = res.fetchone()
-    connection.commit()
-    connection.close()
-    return returned_value
+database = dataSQL(dbfile="database.db")
 
 app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
@@ -76,17 +63,18 @@ def dashboard():
         data["type"] = request.form.get("type")
         data["url"] = request.form.get("url")
         data["dns_content"] = request.form.get("dns_content")
-        subdomains = use_database("SELECT subdomains FROM users where token = ?", (session['id'],))
+        subdomains = database.use_database("SELECT subdomains FROM users where token = ?", (session['id'],))
         if data['type'].lower() == "a":
             
-            use_database("UPDATE users SET subdomains = ? WHERE token = ? '", (f"{subdomains}<>{data['dns_record']}.{data['url']}", session['id'],))
+            database.use_database("UPDATE users SET subdomains = ? WHERE token = ? '", (f"{subdomains}<>{data['dns_record']}.{data['url']}", session['id'],))
             cloudflare[data['url']].insert_A_record(data["dns_record"], data["dns_content"], PROXIED=False)
         elif data['type'].lower() == "cname":
-            use_database("UPDATE users SET subdomains = ? WHERE token = ? '", (f"{subdomains}<>{data['dns_record']}.{data['url']}", session['id'],))
+            database.use_database("UPDATE users SET subdomains = ? WHERE token = ? '", (f"{subdomains}<>{data['dns_record']}.{data['url']}", session['id'],))
             
             cloudflare[data['url']].insert_CNAME_record(data["dns_record"], data["dns_content"], PROXIED=False)    
         else:
             return "wrong type"
+    
     all_sub_domains=[]
     for all_domain in CLOUDFLARE_DOMAINS:
         records = cloudflare[all_domain['url']].getDNSrecords()
@@ -94,16 +82,19 @@ def dashboard():
             all_sub_domains.append({"name": record['name'], "type": record['type'], "content": record['content'], "id": record['id'], "proxied": record['proxied']})
     
     
-    domains = use_database("SELECT subdomains from users where token = ?", (session['id'],))
-    print(domains)
+    domains = database.use_database("SELECT subdomains from users where token = ?", (session['id'],))
+    print(domains[0])
     if domains[0] is None:
         return render_template('dashboard.html', subdomains=[], account_id=CLOUDFLARE_ACCOUNT_ID, github_username=request.cookies.get("username"))
-        
-    user_subdomains = []
-    for domain in domains[0].split("<>"):
-        for possible_domain in all_sub_domains:
-            if possible_domain['name'] == domain:
-                user_subdomains.append(possible_domain)
+    domains = json.loads(domains[0])
+
+    user_subdomains = domains
+    #for domain in domains:
+    #    for possible_domain in all_sub_domains:
+    #        if possible_domain['name'] == domain:
+    #            user_subdomains.append(possible_domain)
+
+    print(user_subdomains)
     
     return render_template('dashboard.html', subdomains=user_subdomains, account_id=CLOUDFLARE_ACCOUNT_ID, github_username=request.cookies.get("username"))
 

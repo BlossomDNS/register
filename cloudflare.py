@@ -33,7 +33,6 @@ class Cloudflare:
         if response.status_code == 200:
             print(response.text)
             return json.loads(response.content)["result"]
-            #return [{"type":pull["type"], "name":pull["name"],"content":pull["content"],"proxied":pull["proxied"], "ttl":pull["ttl"]} for pull in content]
         else:
             print("DIDN'T GET DNS RECORDS")
             print(response.text)
