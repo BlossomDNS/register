@@ -1,4 +1,4 @@
-from flask import Flask, g, redirect, render_template, request,session, url_for
+from flask import Flask, flash, g, redirect, render_template, request,session, url_for
 from admins import *
 from github import *
 from cloudflare import *
@@ -24,6 +24,10 @@ def index():
 @app.route('/signin')
 def signin():
     return github.authorize()
+
+@app.route('/claim')
+def claim():
+    return render_template("claim.html")
 
 # ADMIN WEBSITE CODE
 @app.before_request
