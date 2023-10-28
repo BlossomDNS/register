@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>BlossomDNS | Github</title>
+    <!--  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css"> --->
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/css/bootstrap.min.css') }}">
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/js/bootstrap.min.js') }}">
+    <!-- <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css"> --->
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/fonts/fontawesome-all.min.css') }}">
+    <!-- <link rel="stylesheet" href="assets/css/styles.min.css"> --->
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/styles.min.css') }}">
+    
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <form>
+                    <div class="form-group mb-3">
+                        <div class="input-group"></div>
+                    </div>
+                </form>
+                <div>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item" role="presentation"><a class="nav-link active" role="tab" data-bs-toggle="tab" href="#tab-1">Today <span class="badge rounded-pill bg-primary">{{ n }}</span></a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" role="tabpanel" id="tab-1">
+                            {% for link in links %}
+                            <ul class="thread-list">
+                                <li class="thread"><span class="time">{{link.date}}</span><a href={{ link.url }} class="title">{{ link.title }}</a><span class="icon"> <a class="subscribe" href="javascript:void(0)"><i class="fa fa-star-o"></i></a><a class="flag" href="javascript:void(0)"><i class="fa fa-flag"></i></a></span></li>
+                            </ul>
+                            {% endfor %}
+                        </div>
+                        <div class="tab-pane" role="tabpanel" id="tab-2"></div>
+                        <div class="tab-pane" role="tabpanel" id="tab-3"></div>
+                        <div class="tab-pane" role="tabpanel" id="tab-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="static/styles/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>

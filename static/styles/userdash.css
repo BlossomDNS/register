@@ -1,0 +1,383 @@
+:root {
+    --theme-color: #FFA500;
+    --dark-gray: #585858;
+    --border-color: #ddd;
+    --nav-size: 75px;
+  }
+  
+  body {
+    background: #FAFAFA;
+  }
+  
+  .custom-nav {
+    background: #fff;
+    height: var(--nav-size);
+  }
+  
+  .user-prfile img {
+    --size: 35px;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .bell-icon-badge {
+    font-size: 25px;
+    position: relative;
+  }
+  
+  .bell-icon-badge .bell-badge {
+    background: #00C91F;
+    color: #fff;
+    border-radius: 50%;
+    --size: 17px;
+    width: var(--size);
+    height: var(--size);
+    line-height: var(--size);
+    font-size: 10px;
+    position: absolute;
+    left: 22px;
+    text-align: center;
+  }
+  
+  .navbar-light .navbar-brand {
+    color: var(--theme-color);
+    font-weight: bold;
+  }
+  
+  #sidebar {
+    border-right: 1px solid var(--border-color);
+    height: calc(100vh - var(--nav-size));
+  }
+  
+  #sidebar {
+    padding-top: 30px;
+  }
+  
+  #sidebar .sidebar-menu {
+    list-style: none;
+    padding: 0;
+  }
+  
+  #sidebar .sidebar-menu li a {
+    color: var(--dark-gray);
+    display: block;
+    padding: 9px 0;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.4s;
+  }
+  
+  #sidebar .sidebar-menu li a i {
+    margin-right: 13px;
+    font-size: 17px;
+  }
+  
+  .btn-warning {
+    color: #fff;
+  }
+  
+  .btn.btn-theme {
+    background: var(--theme-color);
+    color: #fff;
+    --padding: 25px;
+    padding-left: var(--padding);
+    padding-right: var(--padding);
+  }
+  
+  .btn.btn-theme:hover {
+    background: var(--theme-color);
+  }
+  
+  .dash-card {
+    background: #fff;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 0 4px #00000012;
+    border-radius: 3px;
+    transition: transform 0.2s ease;
+  }
+  
+  .md-card {
+    background: #fff;
+    padding: 10px;
+    box-shadow: 0 0 4px #00000012;
+  }
+  
+  .dash-card:hover {
+    transform: translateY(-10px);
+  }
+  
+  .dash-card .fa {
+    font-size: 50px;
+    color: var(--dark-gray);
+  }
+  
+  .dash-card p {
+    color: var(--dark-gray);
+    margin-top: 1rem;
+  }
+  
+  .dash-card .btn {
+    margin-top: 20px;
+  }
+  
+  .dash-card h1 {
+    font-weight: 300;
+  }
+  
+  .title {
+    padding-bottom: 15px;
+    color: var(--dark-gray);
+  }
+  
+  .spacethis {
+    padding-top: 30px;
+  }
+  
+  sub {
+    bottom: 0;
+    font-size: 60%;
+  }
+  
+  .table.no-border td {
+    border: none;
+  }
+  
+  .table.no-border th {
+    border-top: none;
+  }
+  
+  .table-user {
+    --size: 30px;
+    width: var(--size);
+    height: var(--size);
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+  
+  .map-img {
+    width: 100%;
+    height: 286px;
+    object-fit: cover;
+  }
+  
+  .search-form {
+    margin-left: 162px;
+    position: relative;
+  }
+  
+  .search-form .form-control {
+    border: none;
+    outline: 0;
+  }
+  
+  .search-form .form-control:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  
+  .search-form .fa {
+    font-size: 20px;
+  }
+  
+  #sidebar .sidebar-menu li a:hover,
+  #sidebar .sidebar-menu li a.active {
+    color: var(--theme-color);
+  }
+  
+  /* Dropdown CSS */
+  
+  .drop {
+    position: relative;
+    margin-right: 15px;
+  }
+  
+  .drop .drop-menu {
+    padding: 0;
+    position: absolute;
+    right: 0;
+    -webkit-transition: all 0.2s cubic-bezier(0.680, 0, 0.265, 1);
+    transition: all 0.2s;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    -webkit-transform-origin: 0 0;
+    transform-origin: top left;
+    z-index: 100;
+    background: #fff;
+    border: 1px solid var(--border-color);
+  }
+  
+  .drop .drop-menu:before {
+    content: "";
+    height: 10px;
+    width: 10px;
+    background: red;
+  }
+  
+  .drop .drop-menu li {
+    display: block;
+    width: 100%;
+    opacity: 0;
+    transform: translate(-20px, 0px);
+  }
+  
+  .drop.open .drop-menu li {
+    display: block;
+    transition: all 0.4s;
+    opacity: 1;
+    transform: translate(0px, 0);
+  }
+  
+  .drop ul li a {
+    width: 100%;
+    padding: 6px 15px;
+    white-space: pre;
+    box-sizing: border-box;
+    display: block;
+    color: var(--dark-gray);
+    text-decoration: none;
+  }
+  
+  .drop ul li a:hover {
+    background: #ebebeb;
+  }
+  
+  .drop.open .drop-menu {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    transition-timing-function: cubic-bezier(0.680, 0, 0.265, 1);
+  }
+  
+  .read-reviews-btn {
+  }
+  
+  .read-reviews {
+    position: absolute;
+    top: 60px;
+    background: #fff;
+    box-shadow: 0 0 6px #00000030;
+    padding: 20px;
+    width: 92%;
+    border-radius: 6px;
+    display: none;
+  }
+  
+  .read-reviews .name h4 {
+    display: inline;
+    margin: 0;
+    margin-right: 10px;
+  }
+  
+  .read-reviews .name {
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 12px;
+    padding-top: 0;
+    padding-bottom: 12px;
+  }
+  
+  .close-reviews {
+    float: right;
+    font-size: 27px;
+    cursor: pointer;
+  }
+  
+  .col-xs-6 {
+    width: 180px;
+    padding: 7px;
+    flex-grow: 1;
+  }
+  
+  .mobile-menu {
+    color: var(--dark-gray);
+    margin-right: 10px;
+    display: none;
+  }
+  
+  @media (max-width: 767px) {
+    #sidebar {
+      height: 100%;
+      display: none;
+    }
+  
+    .mobile-menu {
+      display: block;
+    }
+  
+    .navbar-nav {
+      flex-direction: row;
+    }
+  
+    .search-form {
+      margin-left: 0;
+      width: 47%;
+    }
+  
+    .search-form .form-control {
+      display: none;
+    }
+  
+    .drop {
+      margin-right: 25px;
+    }
+  
+    .bell-icon-badge .bell-badge {
+      left: 14px;
+    }
+  
+    .md-card {
+      overflow: scroll;
+    }
+  
+    .mobile-menu {
+      display: block;
+    }
+  
+    .search-form .fa {
+      position: absolute;
+      right: 22px;
+      color: var(--dark-gray);
+    }
+  
+    .mobile-scrollable {
+      flex-wrap: nowrap;
+      overflow-x: scroll;
+    }
+  
+    .mobile-scrollable .col-md-3 {
+      padding: 6px;
+    }
+  
+    .dash-card .fa {
+      font-size: 30px;
+    }
+  
+    .dash-card .btn {
+      margin-top: 5px;
+      padding: 3px 14px;
+    }
+  
+    .dash-card h1 {
+      font-weight: 300;
+      font-size: 30px;
+    }
+  
+    .dash-card p {
+      color: var(--dark-gray);
+      font-size: 14px;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
+  
+    .spacethis {
+      padding-top: 15px;
+    }
+  
+    .title {
+      padding-bottom: 0px;
+      margin-top: 10px;
+    }
+  }
+  

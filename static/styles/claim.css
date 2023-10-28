@@ -1,0 +1,30 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url("https://getwallpapers.com/wallpaper/full/f/9/d/508720.jpg");
+}
+.login-card {
+    background-color: #F7F7F7;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+    text-align: center;
+    animation-name: slideIn;
+    animation-duration: 0.5s, 2s;
+    animation-timing-function: ease-out, cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation-iteration-count: 1, infinite;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
