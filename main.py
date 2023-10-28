@@ -1,4 +1,4 @@
-from flask import Flask, g, redirect, render_template, request,session, url_for
+from flask import Flask, flash, g, redirect, render_template, request,session, url_for
 from admins import *
 from github import *
 from cloudflare import *
@@ -23,6 +23,9 @@ def use_database(query: str, values:tuple=None):
 
 app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
+app.config['GITHUB_CLIENT_ID'] = CLIENT_ID
+app.config['GITHUB_CLIENT_SECRET'] = CLIENT_SECRET
+github = GitHub(app)
 
 
 
@@ -42,6 +45,13 @@ for domain in CLOUDFLARE_DOMAINS:
 def indexnormal():
     return render_template('home.html')
 
+@app.route('/signin')
+def signin():
+    return github.authorize()
+
+@app.route('/claim')
+def claim():
+    return render_template("claim.html")
 
 # ADMIN WEBSITE CODE
 @app.before_request
