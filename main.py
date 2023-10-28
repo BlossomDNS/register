@@ -37,11 +37,6 @@ for domain in CLOUDFLARE_DOMAINS:
 
 
 #load_github_sites(app=app) #loads sites from github api
-
-@app.route("/datagrid")
-def datagrid():
-    return render_template("datagrid.html")
-
 @app.route('/')
 def indexnormal():
     return render_template('home.html')
