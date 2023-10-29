@@ -208,6 +208,7 @@ def dashboard():
     user_info = requests.get(
         f"https://api.github.com/users/{request.cookies.get('username')}"
     ).json()
+    
     user_profile_picture = user_info["avatar_url"]
     user_company = user_info["company"]
 
@@ -215,7 +216,6 @@ def dashboard():
         return render_template(
             "dashboard.html",
             subdomains=[],
-            account_id=CLOUDFLARE_ACCOUNT_ID,
             github_username=request.cookies.get("username"),
             github_profile=user_profile_picture,
             github_company=user_company,
@@ -232,7 +232,6 @@ def dashboard():
     return render_template(
         "dashboard.html",
         subdomains=user_subdomains,
-        account_id=CLOUDFLARE_ACCOUNT_ID,
         github_username=request.cookies.get("username"),
         github_profile=user_profile_picture,
         github_company=user_company,
