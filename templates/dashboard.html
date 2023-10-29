@@ -10,6 +10,7 @@
       <link href="./static/styles/tabler-payments.min.css?1684106062" rel="stylesheet"/>
       <link href="./static/styles/tabler-vendors.min.css?1684106062" rel="stylesheet"/>
       <link href="./static/styles/demo.min.css?1684106062" rel="stylesheet"/>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
       <style>
          @import url('https://rsms.me/inter/inter.css');
          :root {
@@ -18,6 +19,11 @@
          body {
          font-feature-settings: "cv03", "cv04", "cv11";
          }
+         .right-icons {
+          float: right;
+          margin-left: 1000px;
+          color: whitesmoke;
+          }
       </style>
    </head>
    <body >
@@ -211,6 +217,12 @@
                   <div class="card">
                      <div class="card-header">
                         <h3 class="card-title">{{ subdomain.name }}</h3>
+                        <div class="right-icons">
+                            <div class="btn-group">
+                              <button class="btn btn-outline-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                              <button class="btn btn-outline-primary"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
                      </div>
                      <div class="card-body">
                         <div class="datagrid">
@@ -308,6 +320,5 @@
     <!-- Tabler Core -->
     <script src="./static/js/tabler.min.js?1684106062" defer></script>
     <script src="./static/js/demo.min.js?1684106062" defer></script>
-  </body>
-   </body>
+</body>
 </html>
