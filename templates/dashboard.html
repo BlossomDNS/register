@@ -167,13 +167,10 @@
                            <div class="dropdown-menu">
                               <div class="dropdown-menu-columns">
                                  <div class="dropdown-menu-column">
-                                    <a class="dropdown-item" href="./accordion.html">
-                                    Dashboard
-                                    </a>
                                     <a class="dropdown-item" href="./claim">
                                     Claim SubDomain
                                     </a>
-                                    <a class="dropdown-item" href="./badges.html">
+                                    <a class="dropdown-item" href="./delete">
                                     Delete Domain
                                     </a>
                                  </div>
@@ -219,7 +216,7 @@
                         <h3 class="card-title"> <a href="http://{{ subdomain.name }}">{{subdomain.name}}</a> <span class="status status-green">Active</span></h3>
                         <div class="right-icons">
                             <div class="btn-group">
-                              <button class="btn btn-outline-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                              <a href="/dashboard?delete={{subdomain.name}}"><button class="btn btn-outline-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></button></a>
                               <button class="btn btn-outline-primary"><i class="fa fa-pencil" aria-hidden="true"></i></button>
                             </div>
                         </div>

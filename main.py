@@ -148,47 +148,104 @@ def admin():
                     "proxied": ye["proxied"],
                 }
             )
+    
+    args = request.args.to_dict()
+    if "delete" in args and args["delete"] is not None:
+
+        INPUT = args["delete"]
+        insert = INPUT.split(".")
+        DOMAIN = insert[1] + "." + insert[2]
+
+        domains = database.subdomains_from_token(session=session["id"])
+
+        X = cloudflare[DOMAIN].getDNSrecords()
+        print(X)
+        for sub in X["name"]:
+            if sub == INPUT:
+                cloudflare[DOMAIN].delete(sub["id"])
+
+        if INPUT in domains:
+            domains.remove(INPUT)
+
+        database.use_database(
+            "UPDATE users SET subdomains = ? WHERE token = ?",
+            (
+                f"""{str(domains).strip()}""",
+                session["id"],
+            ),
+        )
+
     return render_template(
         "admin.html", subdomains=subdomains, account_id=CLOUDFLARE_ACCOUNT_ID
     )
 
 
 @app.route("/dashboard", methods=["GET", "POST"])
-def dashboard():
-    if request.method == "POST":
-        data = {}
-        data["dns_record"] = request.form["dns_record"]
-        data["type"] = request.form.get("type")
-        data["url"] = request.form.get("url")
-        data["dns_content"] = request.form.get("dns_content")
-        subdomains = database.use_database(
-            "SELECT subdomains FROM users where token = ?", (session["id"],)
-        )
-        if data["type"].lower() == "a":
-            database.use_database(
-                "UPDATE users SET subdomains = ? WHERE token = ? '",
-                (
-                    f"{subdomains}<>{data['dns_record']}.{data['url']}",
-                    session["id"],
-                ),
-            )
-            cloudflare[data["url"]].insert_A_record(
-                data["dns_record"], data["dns_content"], PROXIED=False
-            )
-        elif data["type"].lower() == "cname":
-            database.use_database(
-                "UPDATE users SET subdomains = ? WHERE token = ? '",
-                (
-                    f"{subdomains}<>{data['dns_record']}.{data['url']}",
-                    session["id"],
-                ),
-            )
+def dashboard(response: str = ""):
+    args = request.args.to_dict()
+    if "delete" in args and args["delete"] is not None:
 
-            cloudflare[data["url"]].insert_CNAME_record(
-                data["dns_record"], data["dns_content"], PROXIED=False
-            )
-        else:
-            return "wrong type"
+        INPUT = args["delete"]
+        insert = INPUT.split(".")
+        DOMAIN = insert[1] + "." + insert[2]
+
+        domains = database.subdomains_from_token(session=session["id"])
+        if (DOMAIN in domains) == False: #if user doesn't own domain, return them back
+            return redirect("dashboard")
+
+        #if they do own domain then continue
+        X = cloudflare[DOMAIN].getDNSrecords()
+        for sub in X:
+            if sub["name"] == INPUT:
+                print(cloudflare[DOMAIN].delete(sub["id"]))
+                
+        domains.remove(INPUT)
+        database.use_database(
+            "UPDATE users SET subdomains = ? WHERE token = ?",
+            (
+                f"""{str(domains).strip()}""",
+                session["id"],
+            ),
+        )
+        
+        return redirect("dashboard")
+    
+
+
+#    if request.method == "POST":
+#        data = {}
+#        data["dns_record"] = request.form["dns_record"]
+#        data["type"] = request.form.get("type")
+#        data["url"] = request.form.get("url")
+#        data["dns_content"] = request.form.get("dns_content")
+#        subdomains = database.use_database(
+#            "SELECT subdomains FROM users where token = ?", (session["id"],)
+#        )
+#        if data["type"].lower() == "a":
+#            database.use_database(
+#                "UPDATE users SET subdomains = ? WHERE token = ? '",
+#                (
+#                    f"{subdomains}<>{data['dns_record']}.{data['url']}",
+#                    session["id"],
+#                ),
+#            )
+#            cloudflare[data["url"]].insert_A_record(
+#                data["dns_record"], data["dns_content"], PROXIED=False
+#            )
+#        elif data["type"].lower() == "cname":
+#            database.use_database(
+#                "UPDATE users SET subdomains = ? WHERE token = ? '",
+#                (
+#                    f"{subdomains}<>{data['dns_record']}.{data['url']}",
+#                    session["id"],
+#                ),
+#            )
+#
+#        cloudflare[data["url"]].insert_CNAME_record(
+#            data["dns_record"], data["dns_content"], PROXIED=False
+#        )
+#    else:
+#        return "wrong type"
 
     all_sub_domains = []
     for all_domain in CLOUDFLARE_DOMAINS:
@@ -211,6 +268,7 @@ def dashboard():
             github_username=request.cookies.get("username"),
             github_profile=user_profile_picture,
             github_company=user_company,
+            response=response
         )
 
     user_subdomains = [
@@ -227,6 +285,7 @@ def dashboard():
         github_username=request.cookies.get("username"),
         github_profile=user_profile_picture,
         github_company=user_company,
+        response=response
     )
 
 
@@ -277,4 +336,4 @@ if __name__ == "__main__":
     # from waitress import serve
     # serve(app, host="0.0.0.0", port=8080)
     app.register_blueprint(authentication)
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0", debug=False)
