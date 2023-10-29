@@ -15,15 +15,10 @@ app.config["GITHUB_CLIENT_ID"] = CLIENT_ID
 app.config["GITHUB_CLIENT_SECRET"] = CLIENT_SECRET
 #GITHUB = GitHub(app)
 
-cloudflare = {}
-for domain in CLOUDFLARE_DOMAINS:
-    cloudflare[domain["url"]] = Cloudflare(
-        api_token=CLOUDFLARE_API_TOKEN,
-        account_id=CLOUDFLARE_ACCOUNT_ID,
-        zone_id=domain["cloudflare_zone_id"],
-    )
+CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, account_id=CLOUDFLARE_ACCOUNT_ID, zone_id=domain["cloudflare_zone_id"]) for domain in CLOUDFLARE_DOMAINS}
 
-DOMAINS = domains=list(cloudflare)
+
+DOMAINS = domains=list(CLOUDFLARE)
 
 @app.route("/")
 def indexnormal():
@@ -38,7 +33,7 @@ def edit(error=""):
         return redirect("dashboard")
     
     DOMAIN = INPUT.split(".")[1]+"."+INPUT.split(".")[2]
-    DOM = cloudflare[DOMAIN].find(INPUT)
+    DOM = CLOUDFLARE[DOMAIN].find(INPUT)
 
     
     if ("dom" in args and args["dom"] is not None) == False:
@@ -50,8 +45,8 @@ def edit(error=""):
         TYPE = request.form["type"]
         CONTENT = request.form["content"]
 
-        id = cloudflare[DOMAIN].find(name=NAME)["id"]
-        if cloudflare[DOMAIN].update(DNS_RECORD_NAME=str(NAME),DNS_RECORD_CONTENT=CONTENT,type=TYPE, id=id).status_code == 200:
+        id = CLOUDFLARE[DOMAIN].find(name=NAME)["id"]
+        if CLOUDFLARE[DOMAIN].update(DNS_RECORD_NAME=str(NAME),DNS_RECORD_CONTENT=CONTENT,type=TYPE, id=id).status_code == 200:
             return redirect("dashboard")
         else:
             return render_template("edit.html", domain=DOM, error="FAILED TO UPDATE ON CLOUDFLARE")
@@ -64,14 +59,17 @@ def edit(error=""):
 def claim(error: str = ""):
     if request.method == "POST":
         INPUT = request.form["dns_submission"]
+        if len(INPUT.split(".")) > 1: #counter subdomains with periods
+            return render_template("claim.html", error="Inappropriate Choice", domains=DOMAINS)
+        
         DOMAIN = request.form["domain"]
         print(DOMAIN)
 
         # Check if domain is taken or not / free and availiable
-        if (DOMAIN in list(cloudflare)) != True:
+        if (DOMAIN in list(CLOUDFLARE)) != True:
             return render_template("claim.html", error="We Don't Offer That Domain", domains=DOMAINS)
 
-        for x in cloudflare[DOMAIN].getDNSrecords():
+        for x in CLOUDFLARE[DOMAIN].getDNSrecords():
             if INPUT == x["name"]:
                 return render_template("claim.html", error="Domain already taken", domains=DOMAINS)
             
@@ -86,7 +84,7 @@ def claim(error: str = ""):
 
         #Give user the subdomain
         if (
-            cloudflare[DOMAIN]
+            CLOUDFLARE[DOMAIN]
             .insert_CNAME_record(DNS_RECORD_NAME=INPUT+"."+DOMAIN, DNS_RECORD_CONTENT="github.com")
             .status_code
             != 200
@@ -115,7 +113,7 @@ def admin():
     subdomains = []
 
     for domain in CLOUDFLARE_DOMAINS:
-        yes = cloudflare[domain["url"]].getDNSrecords()
+        yes = CLOUDFLARE[domain["url"]].getDNSrecords()
         for ye in yes:
             subdomains.append(
                 {
@@ -135,7 +133,7 @@ def admin():
         insert = INPUT.split(".")
         DOMAIN = insert[1] + "." + insert[2]
 
-        if cloudflare[DOMAIN].find_and_delete(INPUT):
+        if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
             database.delete(subdomain=INPUT)
         
         return redirect("admin")
@@ -164,7 +162,7 @@ def dashboard(response: str = ""):
             return redirect("dashboard")
 
 
-        if cloudflare[DOMAIN].find_and_delete(INPUT):
+        if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
             database.delete(subdomain=INPUT)
         
 
@@ -173,7 +171,7 @@ def dashboard(response: str = ""):
 
     all_sub_domains = []
     for all_domain in CLOUDFLARE_DOMAINS:
-        records = cloudflare[all_domain["url"]].getDNSrecords()
+        records = CLOUDFLARE[all_domain["url"]].getDNSrecords()
         for record in records:
             all_sub_domains.append(record)
 
@@ -225,11 +223,11 @@ def control(output: str = "N/A"):
         data["url"] = request.form.get("url")
         data["dns_content"] = request.form.get("dns_content")
         if data["type"].lower() == "a":
-            cloudflare[data["url"]].insert_A_record(
+            CLOUDFLARE[data["url"]].insert_A_record(
                 data["dns_record"], data["dns_content"], PROXIED=False
             )
         elif data["type"].lower() == "cname":
-            cloudflare[data["url"]].insert_CNAME_record(
+            CLOUDFLARE[data["url"]].insert_CNAME_record(
                 data["dns_record"], data["dns_content"], PROXIED=False
             )
         else:
