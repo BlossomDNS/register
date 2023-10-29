@@ -31,13 +31,10 @@ def login():
 
 @authentication.route('/authorize')
 def authorize():
-    github = oauth.create_client('github')
-    token = github.authorize_access_token()
-    resp = github.get('user', token=token)
+    resp = oauth.create_client('github').get('user', token=github.authorize_access_token())
     profile = resp.json()
 
     x = database.use_database("SELECT COUNT(*) FROM users WHERE token = ?", (profile['id'],))
-    print(x[0])
     if int(x[0]) >= 1: #check if acct with token already exists
         res = make_response(redirect(url_for("dashboard")))
         res.set_cookie("id", str(profile['id']))
