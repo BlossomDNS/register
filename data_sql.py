@@ -102,3 +102,14 @@ class dataSQL:
         else:
             return False
     
+    def delete(self, subdomain) -> bool:
+        try:
+            self.connection = self.connect()
+            self.cursor = self.connection.cursor()
+            self.cursor.execute(f"DELETE FROM subdomains WHERE subdomain = '{subdomain}'")
+            self.cursor.close()
+            self.close()
+            
+            return True
+        except:
+            return False

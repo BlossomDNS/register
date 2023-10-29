@@ -137,24 +137,16 @@ def dashboard(response: str = ""):
         insert = INPUT.split(".")
         DOMAIN = insert[1] + "." + insert[2]
 
+
+
         domains = database.subdomains_from_token(session=session["id"])
-        if (DOMAIN in domains) == False: #if user doesn't own domain, return them back
+        if (INPUT in domains) == False: #if user doesn't own domain, return them back
             return redirect("dashboard")
 
-        #if they do own domain then continue
-        X = cloudflare[DOMAIN].getDNSrecords()
-        for sub in X:
-            if sub["name"] == INPUT:
-                print(cloudflare[DOMAIN].delete(sub["id"]))
-                
-        domains.remove(INPUT)
-        database.use_database(
-            "UPDATE users SET subdomains = ? WHERE token = ?",
-            (
-                f"""{str(domains).strip()}""",
-                session["id"],
-            ),
-        )
+
+        if cloudflare[DOMAIN].find_and_delete(INPUT):
+            database.delete(subdomain=INPUT)
+        
 
         return redirect("dashboard")
 
