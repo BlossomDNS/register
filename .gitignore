@@ -6,3 +6,5 @@ config.py
 
 __pycache__
 venv/*
+
+database.db
