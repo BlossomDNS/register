@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>BlossomDNS | Claim Subdomain</title>
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/css/bootstrap.min.css') }}">
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/js/bootstrap.min.js') }}">
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/Google-Style-Login-.css') }}">
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/claim.css') }}">
+</head>
+
+<body>
+    <div class="login-card" style="justify-content: center;text-align: center;">
+        <p class="profile-name-card">Welcome to BlossomDNS<br>Write down a Domain to delete</p>
+        <form class="form-signin", method="POST">
+            <input class="form-control" type="text" name="dns_submission" required="" placeholder="(XXXX.example.com)" autofocus="">
+            
+            <div class="checkbox"></div><button class="btn btn-primary btn-lg d-block btn-signin w-100" type="submit">Check Availiabiliy</button>
+            <p class="profile-name-card"> -> {{ error }}</p>
+        </form>
+    </div>
+    <script src="static/styles/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>
