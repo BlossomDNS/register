@@ -23,6 +23,7 @@ for domain in CLOUDFLARE_DOMAINS:
         zone_id=domain["cloudflare_zone_id"],
     )
 
+DOMAINS = domains=list(cloudflare)
 
 @app.route("/")
 def indexnormal():
@@ -33,40 +34,39 @@ def indexnormal():
 def claim(error: str = ""):
     if request.method == "POST":
         INPUT = request.form["dns_submission"]
-        insert = INPUT.split(".")
-
-        if len(insert) != 3:
-            return render_template("claim.html", error="Bad Insert")
-        
-        DOMAIN = insert[1] + "." + insert[2]
+        DOMAIN = request.form["domain"]
+        print(DOMAIN)
 
         # Check if domain is taken or not / free and availiable
         if (DOMAIN in list(cloudflare)) != True:
-            return render_template("claim.html", error="We Don't Offer That Domain")
+            return render_template("claim.html", error="We Don't Offer That Domain", domains=DOMAINS)
 
         for x in cloudflare[DOMAIN].getDNSrecords():
             if INPUT == x["name"]:
-                return render_template("claim.html", error="Domain already taken")
-
-        if (
-            cloudflare[DOMAIN]
-            .insert_CNAME_record(DNS_RECORD_NAME=INPUT, DNS_RECORD_CONTENT="github.com")
-            .status_code
-            != 200
-        ): return render_template("claim.html", error="Failed to POST to Cloudflare")
-
+                return render_template("claim.html", error="Domain already taken", domains=DOMAINS)
+            
+            print(INPUT+"."+DOMAIN)
+        
         domains = database.subdomains_from_token(session=session["id"])
         if database.get_from_token(need="max", session=session["id"]) <= len(domains):
             return render_template(
                 "claim.html", error="You already have a max # of domans."
             )
-        
-        database.new_subdomain(token=session["id"],subdomain=INPUT)
 
-        return render_template("claim.html", error="SUCCESS")
+
+        #Give user the subdomain
+        if (
+            cloudflare[DOMAIN]
+            .insert_CNAME_record(DNS_RECORD_NAME=INPUT+"."+DOMAIN, DNS_RECORD_CONTENT="github.com")
+            .status_code
+            != 200
+        ): return render_template("claim.html", error="Failed to POST to Cloudflare", domains=DOMAINS)        
+        
+        database.new_subdomain(token=session["id"],subdomain=INPUT+"."+DOMAIN)
+        return redirect("dashboard")
 
     else:
-        return render_template("claim.html", error=error)
+        return render_template("claim.html", error=error, domains=DOMAINS)
 
 
 # ADMIN WEBSITE CODE
