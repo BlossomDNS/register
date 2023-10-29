@@ -155,6 +155,7 @@
                                                     <th>Name</th>
                                                     <th>Content</th>
                                                     <th>Proxied</th>
+                                                    <th>Delete</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -165,6 +166,7 @@
                                                     <td>{{subdomain.name}}</td>
                                                     <td>{{subdomain.content}}</td>
                                                     <td>{{subdomain.proxied}}</td>
+                                                    <td><a href="/admin?delete={{subdomain.name}}">Click here</a></td>
                                                 </tr>
                                                 {%endfor%}
                                                 {%endif%}

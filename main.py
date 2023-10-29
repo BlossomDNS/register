@@ -61,14 +61,8 @@ def claim(error: str = ""):
             return render_template(
                 "claim.html", error="You already have a max # of domans."
             )
-        domains.append(INPUT)
-        database.use_database(
-            "UPDATE users SET subdomains = ? WHERE token = ?",
-            (
-                f"""{str(domains).strip()}""",
-                session["id"],
-            ),
-        )
+        
+        database.new_subdomain(token=session["id"],subdomain=INPUT)
 
         return render_template("claim.html", error="SUCCESS")
 
@@ -111,12 +105,21 @@ def admin():
         insert = INPUT.split(".")
         DOMAIN = insert[1] + "." + insert[2]
 
-        domains = database.subdomains_from_token(session=session["id"])
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT subdomains FROM users")
+        subdomains = json.loads([row[0] for row in cursor.fetchall()])
+        cursor.close()
+        conn.close()
 
+        print(subdomains)
+
+        
+        return redirect("admin")
         X = cloudflare[DOMAIN].getDNSrecords()
         print(X)
-        for sub in X["name"]:
-            if sub == INPUT:
+        for sub in X:
+            if sub["name"] == INPUT:
                 cloudflare[DOMAIN].delete(sub["id"])
 
         if INPUT in domains:
