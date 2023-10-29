@@ -42,8 +42,14 @@ def claim(error: str = ""):
         
 
         domains = database.subdomains_from_token(session=session["id"])
-        domains.append(INPUT)
 
+        max = database.get_from_token(need="max",session=session["id"])
+        print(max)
+
+        if max <= len(domains):
+            return render_template("claim.html", error="You already have a max # of domans.")
+
+        domains.append(INPUT)
         database.use_database("UPDATE users SET subdomains = ? WHERE token = ?", (f"""{str(domains).strip()}""", session['id'],))
         
         if cloudflare[DOMAIN].insert_CNAME_record(DNS_RECORD_NAME=INPUT, DNS_RECORD_CONTENT="github.com").status_code != 200:    

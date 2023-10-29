@@ -50,3 +50,7 @@ class dataSQL:
         if domains[0] is None:
             return []
         return json.loads(domains[0].replace("'", '"'))
+    
+    def get_from_token(self, need, session):
+        out = self.use_database("SELECT "+need+" from users where token = ?", (session,))
+        return out[0]
