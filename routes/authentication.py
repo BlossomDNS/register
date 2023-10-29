@@ -8,7 +8,7 @@ from main import database
 
 authentication = Blueprint("authentication", __name__)
 oauth = OAuth(current_app)
-github = oauth.register(
+GITHUB = oauth.register(
     name="github",
     client_id=CLIENT_ID,
     client_secret=CLIENT_SECRET,
@@ -26,13 +26,13 @@ def login():
     github = oauth.create_client("github")
     redirect_uri = url_for("authentication.authorize", _external=True)
 
-    return github.authorize_redirect(redirect_uri)
+    return GITHUB.authorize_redirect(redirect_uri)
 
 
 @authentication.route("/authorize")
 def authorize():
     resp = oauth.create_client("github").get(
-        "user", token=github.authorize_access_token()
+        "user", token=GITHUB.authorize_access_token()
     )
     profile = resp.json()
 
@@ -40,6 +40,7 @@ def authorize():
         "SELECT COUNT(*) FROM users WHERE token = ?", (profile["id"],)
     )
     if int(x[0]) >= 1:  # check if acct with token already exists
+        session["id"] = profile["id"]
         res = make_response(redirect(url_for("dashboard")))
         res.set_cookie("id", str(profile["id"]))
         res.set_cookie("username", str(profile["login"]))

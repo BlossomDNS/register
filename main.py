@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = "somesecretkeythatonlyishouldknow"
 app.config["GITHUB_CLIENT_ID"] = CLIENT_ID
 app.config["GITHUB_CLIENT_SECRET"] = CLIENT_SECRET
-github = GitHub(app)
+#GITHUB = GitHub(app)
 
 cloudflare = {}
 for domain in CLOUDFLARE_DOMAINS:
@@ -53,8 +53,7 @@ def claim(error: str = ""):
             .insert_CNAME_record(DNS_RECORD_NAME=INPUT, DNS_RECORD_CONTENT="github.com")
             .status_code
             != 200
-        ):
-            return render_template("claim.html", error="Failed to POST to Cloudflare")
+        ): return render_template("claim.html", error="Failed to POST to Cloudflare")
 
         domains = database.subdomains_from_token(session=session["id"])
         if database.get_from_token(need="max", session=session["id"]) <= len(domains):
@@ -135,6 +134,8 @@ def dashboard(response: str = ""):
 
         INPUT = args["delete"]
         insert = INPUT.split(".")
+        if len(insert) != 3: #subdomain | domain | com (3)
+            return redirect("dashboard")
         DOMAIN = insert[1] + "." + insert[2]
 
 
@@ -157,14 +158,15 @@ def dashboard(response: str = ""):
         for record in records:
             all_sub_domains.append(record)
 
-
-    domains = database.subdomains_from_token(session=session["id"])
     user_info = requests.get(
         f"https://api.github.com/users/{request.cookies.get('username')}"
     ).json()
 
     user_profile_picture = user_info["avatar_url"]
     user_company = user_info["company"]
+
+
+    domains = database.subdomains_from_token(session=session["id"])
 
     if domains == []:
         return render_template(
