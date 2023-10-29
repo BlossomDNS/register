@@ -194,21 +194,13 @@ def dashboard():
     for all_domain in CLOUDFLARE_DOMAINS:
         records = cloudflare[all_domain["url"]].getDNSrecords()
         for record in records:
-            all_sub_domains.append(
-                {
-                    "name": record["name"],
-                    "type": record["type"],
-                    "content": record["content"],
-                    "id": record["id"],
-                    "proxied": record["proxied"],
-                }
-            )
+            all_sub_domains.append(record)
 
     domains = database.subdomains_from_token(session=session["id"])
     user_info = requests.get(
         f"https://api.github.com/users/{request.cookies.get('username')}"
     ).json()
-    
+
     user_profile_picture = user_info["avatar_url"]
     user_company = user_info["company"]
 
