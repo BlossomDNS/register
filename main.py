@@ -105,19 +105,8 @@ def admin():
         insert = INPUT.split(".")
         DOMAIN = insert[1] + "." + insert[2]
 
-        conn = sqlite3.connect('database.db')
-        cursor = conn.cursor()
-
-        print(cloudflare[DOMAIN].find_and_delete(INPUT))
-        cursor.execute(f"DELETE FROM subdomains WHERE subdomain = '{INPUT}'")
-
-
-        cursor.close()
-        conn.commit()
-        conn.close()
-
-        print(subdomains)
-
+        if cloudflare[DOMAIN].find_and_delete(INPUT):
+            database.delete(subdomain=INPUT)
         
         return redirect("admin")
 
