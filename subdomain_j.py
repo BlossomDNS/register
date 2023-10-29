@@ -2,7 +2,7 @@
 
 # import requests
 # import config
-# import json 
+# import json
 
 # #code that deals with the subdomain.json file
 
@@ -13,7 +13,7 @@
 #         dict = {}
 #         for x in config.CLOUDFLARE_DOMAINS:
 #             dict[x] = {}
-        
+
 #         # Writing to sample.json
 #         with open("subdomain.json", "w") as outfile:
 #             json.dump(dict, outfile, indent=4)

@@ -1,4 +1,4 @@
-#Admin accounts
+# Admin accounts
 class Admin:
     def __init__(self, username, password, id):
         self.id = id

@@ -9,7 +9,8 @@ Contains github for github side of the program
 from flask import render_template
 import requests
 from datetime import datetime
-#from config import GITHUB_REPO
+
+# from config import GITHUB_REPO
 
 
 # def get_pr_date() -> list:
@@ -26,7 +27,7 @@ from datetime import datetime
 #         print(f"Request failed with status code {response.status_code}")
 
 
-#def load_github_sites(app): #for main.py
+# def load_github_sites(app): #for main.py
 #    @app.route('/pr')
 #    def pr():
 #        date_format = "%Y-%m-%dT%H:%M:%SZ"
