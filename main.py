@@ -1,9 +1,9 @@
+import requests
 from flask import Flask, flash, g, redirect, render_template, request,session, url_for
 from flask_github import GitHub
 from admins import *
 from github import *
 from cloudflare import *
-import sqlite3
 from routes.authentication import * 
 from data_sql import *
 
@@ -146,16 +146,18 @@ def dashboard():
     
     
     domains = database.subdomains_from_token(session=session["id"])
+    user_info = requests.get(f"https://api.github.com/users/{request.cookies.get('username')}").json()
+    user_profile_picture = user_info['avatar_url']
 
     if domains == []:
-        return render_template('dashboard.html', subdomains=[], account_id=CLOUDFLARE_ACCOUNT_ID, github_username=request.cookies.get("username"))
+        return render_template('dashboard.html', subdomains=[], account_id=CLOUDFLARE_ACCOUNT_ID, github_username=request.cookies.get("username"), github_profile=user_profile_picture)
 
 
     user_subdomains = [possible_domain for possible_domain in all_sub_domains if possible_domain['name'] in domains]    
 
     print(user_subdomains)
     
-    return render_template('dashboard.html', subdomains=user_subdomains, account_id=CLOUDFLARE_ACCOUNT_ID, github_username=request.cookies.get("username"))
+    return render_template('dashboard.html', subdomains=user_subdomains, account_id=CLOUDFLARE_ACCOUNT_ID, github_username=request.cookies.get("username"), github_profile=user_profile_picture)
 
 @app.route('/control', methods=['GET', 'POST']) #admin site soon
 def control(output:str = "N/A"):
