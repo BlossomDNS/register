@@ -40,11 +40,16 @@ def delete(error: str = ""):
 
         print(cloudflare[DOMAIN].getDNSrecords())
 
-        if INPUT in domains:
-            for sub in cloudflare[DOMAIN].getDNSrecords():
-                if sub == INPUT:
-                    if cloudflare[DOMAIN].delete(sub["id"]) != 200:
-                        return render_template("delete.html", error="Failed to POST to Cloudflare")
+        if (INPUT in domains) == False:
+            return render_template("delete.html",error="You don't own that domain")
+        
+        for sub in cloudflare[DOMAIN].getDNSrecords():
+            if sub == INPUT:
+                if cloudflare[DOMAIN].delete(sub["id"]) != 200:
+                    return render_template("delete.html", error="Failed to POST to Cloudflare")
+            
+            else:
+                return render_template("delete.html", error="Domain is not used")
         
         if INPUT in domains:
             domains.remove(INPUT)
