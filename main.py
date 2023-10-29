@@ -43,10 +43,7 @@ def claim(error: str = ""):
 
         domains = database.subdomains_from_token(session=session["id"])
 
-        max = database.get_from_token(need="max",session=session["id"])
-        print(max)
-
-        if max <= len(domains):
+        if database.get_from_token(need="max",session=session["id"]) <= len(domains):
             return render_template("claim.html", error="You already have a max # of domans.")
 
         domains.append(INPUT)

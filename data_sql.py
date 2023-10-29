@@ -15,7 +15,7 @@ class dataSQL:
         self.dbfile = dbfile
         self.connection = sqlite3.connect(self.dbfile)
 
-        self.connection.execute("CREATE TABLE IF NOT EXISTS users (token TEXT, username TEXT, subdomains TEXT)")
+        self.connection.execute("CREATE TABLE IF NOT EXISTS users (token TEXT, username TEXT, subdomains TEXT, max INTEGER DEFAULT 1)")
         self.connection.commit()
         self.connection.close()
     
