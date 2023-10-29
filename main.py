@@ -49,7 +49,7 @@ def edit(error=""):
         id = CLOUDFLARE[DOMAIN].find(name=NAME)["id"]
         if CLOUDFLARE[DOMAIN].update(DNS_RECORD_NAME=str(NAME),DNS_RECORD_CONTENT=CONTENT,type=TYPE, id=id).status_code == 200:
             target = session["id"]
-            send_discord_message(f"USER ``{session}`` as ``{get_github_username(github_id=target)}`` has **update** the domain: ``{INPUT}`` to following: ```TYPE   ->  {TYPE} \nNAME  ->  {NAME} \nCONTENT  ->  {CONTENT}```")
+            send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **update** the domain: ``{INPUT}`` to following: ```TYPE   ->  {TYPE} \nNAME  ->  {NAME} \nCONTENT  ->  {CONTENT}```")
             return redirect("dashboard")
         else:
             return render_template("edit.html", domain=DOM, error="FAILED TO UPDATE ON CLOUDFLARE")
@@ -95,7 +95,7 @@ def claim(error: str = ""):
         
         database.new_subdomain(token=session["id"],subdomain=INPUT+"."+DOMAIN)
         target = session["id"]
-        send_discord_message(f"USER ``{session}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{INPUT}.{DOMAIN}``")
+        send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{INPUT}.{DOMAIN}``")
         return redirect("dashboard")
 
     else:
@@ -114,7 +114,7 @@ def before_request():
 @app.route("/admin", methods=["GET", "POST"])  # admin site soon
 def admin():
     if not g.user:
-        return redirect(url_for("login"))
+        return redirect(url_for("adminlogin"))
     subdomains = []
 
     for domain in CLOUDFLARE_DOMAINS:
@@ -140,6 +140,9 @@ def admin():
 
         if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
             database.delete(subdomain=INPUT)
+        
+        target = session["admin_email"]
+        send_discord_message(f":safety_vest: ADMIN ``{target}`` has deleted the domain ``{INPUT}``. :safety_vest: ")
         
         return redirect("admin")
 
@@ -170,7 +173,7 @@ def dashboard(response: str = ""):
         if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
             database.delete(subdomain=INPUT)
             target = session["id"]
-            send_discord_message(f"USER ``{session}`` as ``{get_github_username(github_id=target)}`` has **deleted** the domain: ``{INPUT}``.")
+            send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **deleted** the domain: ``{INPUT}``.")
 
         return redirect("dashboard")
 
@@ -247,16 +250,22 @@ def loginadmin():
     if request.method == "POST":
         session.pop("user_id", None)
 
-        email = request.form["email"]
-        pw = request.form["password"]
+        try:
+            email = request.form["email"]
+            pw = request.form["password"]
 
-        user = [x for x in ADMIN_ACCTS if x.username == email][0]
-        if user and user.password == pw:
-            session["user_id"] = user.id
-            return redirect(url_for("admin"))
-
-        return redirect(url_for("loginadmin"))
-
+            user = [x for x in ADMIN_ACCTS if x.username == email][0]
+            if user and user.password == pw:
+                session["user_id"] = user.id
+                session["admin_email"] = user.username
+                send_discord_message(f":safety_vest: ADMIN ``{user.username}`` has logged in. :safety_vest: ")
+                return redirect(url_for("admin"))
+            
+            send_discord_message(f":octagonal_sign: ADMIN ``{user.username}`` has failed login attempt. :octagonal_sign: ")
+            return redirect(url_for("loginadmin"))
+        except Exception as e:
+            send_discord_message(f":octagonal_sign:  __Attempted Login Failed...__ Error: ```{e}``` :octagonal_sign: ")
+        
     return render_template("login.html")
 
 
