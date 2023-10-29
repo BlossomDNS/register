@@ -6,6 +6,7 @@ from github import *
 from cloudflare import *
 from routes.authentication import *
 from data_sql import *
+from discord import get_github_username, send_discord_message
 
 database = dataSQL(dbfile="database.db")
 
@@ -47,6 +48,8 @@ def edit(error=""):
 
         id = CLOUDFLARE[DOMAIN].find(name=NAME)["id"]
         if CLOUDFLARE[DOMAIN].update(DNS_RECORD_NAME=str(NAME),DNS_RECORD_CONTENT=CONTENT,type=TYPE, id=id).status_code == 200:
+            target = session["id"]
+            send_discord_message(f"USER ``{session}`` as ``{get_github_username(github_id=target)}`` has **update** the domain: ``{INPUT}`` to following: ```TYPE   ->  {TYPE} \nNAME  ->  {NAME} \nCONTENT  ->  {CONTENT}```")
             return redirect("dashboard")
         else:
             return render_template("edit.html", domain=DOM, error="FAILED TO UPDATE ON CLOUDFLARE")
@@ -91,6 +94,8 @@ def claim(error: str = ""):
         ): return render_template("claim.html", error="Failed to POST to Cloudflare", domains=DOMAINS)        
         
         database.new_subdomain(token=session["id"],subdomain=INPUT+"."+DOMAIN)
+        target = session["id"]
+        send_discord_message(f"USER ``{session}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{INPUT}.{DOMAIN}``")
         return redirect("dashboard")
 
     else:
@@ -164,7 +169,8 @@ def dashboard(response: str = ""):
 
         if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
             database.delete(subdomain=INPUT)
-        
+            target = session["id"]
+            send_discord_message(f"USER ``{session}`` as ``{get_github_username(github_id=target)}`` has **deleted** the domain: ``{INPUT}``.")
 
         return redirect("dashboard")
 
@@ -184,7 +190,7 @@ def dashboard(response: str = ""):
 
 
     domains = database.subdomains_from_token(session=session["id"])
-
+    
     if domains == []:
         return render_template(
             "dashboard.html",
@@ -211,29 +217,29 @@ def dashboard(response: str = ""):
     )
 
 
-@app.route("/control", methods=["GET", "POST"])  # admin site soon
-def control(output: str = "N/A"):
-    if not g.user:
-        return redirect(url_for("login"))
-
-    if request.method == "POST":
-        data = {}
-        data["dns_record"] = request.form["dns_record"]
-        data["type"] = request.form.get("type")
-        data["url"] = request.form.get("url")
-        data["dns_content"] = request.form.get("dns_content")
-        if data["type"].lower() == "a":
-            CLOUDFLARE[data["url"]].insert_A_record(
-                data["dns_record"], data["dns_content"], PROXIED=False
-            )
-        elif data["type"].lower() == "cname":
-            CLOUDFLARE[data["url"]].insert_CNAME_record(
-                data["dns_record"], data["dns_content"], PROXIED=False
-            )
-        else:
-            return "wrong type"
-
-    return render_template("control.html", output=output, urls=CLOUDFLARE_DOMAINS)
+#@app.route("/control", methods=["GET", "POST"])  # admin site soon
+#def control(output: str = "N/A"):
+#    if not g.user:
+#        return redirect(url_for("login"))
+#
+#    if request.method == "POST":
+#        data = {}
+#        data["dns_record"] = request.form["dns_record"]
+#        data["type"] = request.form.get("type")
+#        data["url"] = request.form.get("url")
+#        data["dns_content"] = request.form.get("dns_content")
+#        if data["type"].lower() == "a":
+#            CLOUDFLARE[data["url"]].insert_A_record(
+#                data["dns_record"], data["dns_content"], PROXIED=False
+#            )
+#        elif data["type"].lower() == "cname":
+#            CLOUDFLARE[data["url"]].insert_CNAME_record(
+#                data["dns_record"], data["dns_content"], PROXIED=False
+#            )
+#        else:
+#            return "wrong type"
+#
+#    return render_template("control.html", output=output, urls=CLOUDFLARE_DOMAINS)
 
 
 @app.route("/loginadmin", methods=["GET", "POST"])
@@ -258,4 +264,4 @@ if __name__ == "__main__":
     # from waitress import serve
     # serve(app, host="0.0.0.0", port=8080)
     app.register_blueprint(authentication)
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0", debug=False)
