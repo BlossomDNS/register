@@ -79,10 +79,11 @@ def claim(error: str = ""):
     if request.method == "POST":
         INPUT = request.form["dns_submission"]
         insert = INPUT.split(".")
-        DOMAIN = insert[1] + "." + insert[2]
 
         if len(insert) != 3:
             return render_template("claim.html", error="Bad Insert")
+        
+        DOMAIN = insert[1] + "." + insert[2]
 
         # Check if domain is taken or not / free and availiable
         if (DOMAIN in list(cloudflare)) != True:
