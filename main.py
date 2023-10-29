@@ -102,36 +102,26 @@ def admin():
     if "delete" in args and args["delete"] is not None:
 
         INPUT = args["delete"]
+        print(INPUT)
         insert = INPUT.split(".")
         DOMAIN = insert[1] + "." + insert[2]
 
         conn = sqlite3.connect('database.db')
         cursor = conn.cursor()
-        cursor.execute("SELECT subdomains FROM users")
-        subdomains = json.loads([row[0] for row in cursor.fetchall()])
+
+        print(cloudflare[DOMAIN].find_and_delete(INPUT))
+        cursor.execute(f"DELETE FROM subdomains WHERE subdomain = '{INPUT}'")
+
+
         cursor.close()
+        conn.commit()
         conn.close()
 
         print(subdomains)
 
         
         return redirect("admin")
-        X = cloudflare[DOMAIN].getDNSrecords()
-        print(X)
-        for sub in X:
-            if sub["name"] == INPUT:
-                cloudflare[DOMAIN].delete(sub["id"])
 
-        if INPUT in domains:
-            domains.remove(INPUT)
-
-        database.use_database(
-            "UPDATE users SET subdomains = ? WHERE token = ?",
-            (
-                f"""{str(domains).strip()}""",
-                session["id"],
-            ),
-        )
 
     return render_template(
         "admin.html", subdomains=subdomains, account_id=CLOUDFLARE_ACCOUNT_ID
@@ -167,49 +157,14 @@ def dashboard(response: str = ""):
         )
 
         return redirect("dashboard")
-    
 
-
-#    if request.method == "POST":
-#        data = {}
-#        data["dns_record"] = request.form["dns_record"]
-#        data["type"] = request.form.get("type")
-#        data["url"] = request.form.get("url")
-#        data["dns_content"] = request.form.get("dns_content")
-#        subdomains = database.use_database(
-#            "SELECT subdomains FROM users where token = ?", (session["id"],)
-#        )
-#        if data["type"].lower() == "a":
-#            database.use_database(
-#                "UPDATE users SET subdomains = ? WHERE token = ? '",
-#                (
-#                    f"{subdomains}<>{data['dns_record']}.{data['url']}",
-#                    session["id"],
-#                ),
-#            )
-#            cloudflare[data["url"]].insert_A_record(
-#                data["dns_record"], data["dns_content"], PROXIED=False
-#            )
-#        elif data["type"].lower() == "cname":
-#            database.use_database(
-#                "UPDATE users SET subdomains = ? WHERE token = ? '",
-#                (
-#                    f"{subdomains}<>{data['dns_record']}.{data['url']}",
-#                    session["id"],
-#                ),
-#            )
-#
-#        cloudflare[data["url"]].insert_CNAME_record(
-#            data["dns_record"], data["dns_content"], PROXIED=False
-#        )
-#    else:
-#        return "wrong type"
 
     all_sub_domains = []
     for all_domain in CLOUDFLARE_DOMAINS:
         records = cloudflare[all_domain["url"]].getDNSrecords()
         for record in records:
             all_sub_domains.append(record)
+
 
     domains = database.subdomains_from_token(session=session["id"])
     user_info = requests.get(
@@ -234,8 +189,6 @@ def dashboard(response: str = ""):
         for possible_domain in all_sub_domains
         if possible_domain["name"] in domains
     ]
-
-    print(user_subdomains)
 
     return render_template(
         "dashboard.html",

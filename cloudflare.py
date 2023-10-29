@@ -75,6 +75,18 @@ class Cloudflare:
         response = requests.delete(url, headers=self.headers)
 
         return response
+    
+    def find_and_delete(self, name: str) -> bool:
+        x = self.getDNSrecords()
+
+        for domain in x:
+            if domain["name"]==name:
+                if self.delete(identifier=domain["id"]).status_code == 200:
+                    return True
+                else:
+                    return False
+                
+        return False
 
     def execute(self, dns_record_data):  # for post
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"

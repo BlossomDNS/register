@@ -25,6 +25,7 @@ github = oauth.register(
 def login():
     github = oauth.create_client("github")
     redirect_uri = url_for("authentication.authorize", _external=True)
+
     return github.authorize_redirect(redirect_uri)
 
 
