@@ -29,51 +29,6 @@ def indexnormal():
     return render_template("home.html")
 
 
-@app.route("/delete", methods=["GET", "POST"])
-def delete(error: str = ""):
-    if request.method == "POST":
-        INPUT = request.form["dns_submission"]
-        insert = INPUT.split(".")
-        DOMAIN = insert[1] + "." + insert[2]
-
-        # Check if domain is taken or not / free and availiable
-        if (DOMAIN in list(cloudflare)) != True:
-            return render_template("claim.html", error="We Don't Offer That Domain")
-
-        domains = database.subdomains_from_token(session=session["id"])
-
-        print(cloudflare[DOMAIN].getDNSrecords())
-
-        if (INPUT in domains) == False:
-            return render_template("delete.html", error="You don't own that domain")
-
-        for sub in cloudflare[DOMAIN].getDNSrecords():
-            if sub == INPUT:
-                if cloudflare[DOMAIN].delete(sub["id"]) != 200:
-                    return render_template(
-                        "delete.html", error="Failed to POST to Cloudflare"
-                    )
-
-            else:
-                return render_template("delete.html", error="Domain is not used")
-
-        if INPUT in domains:
-            domains.remove(INPUT)
-
-        database.use_database(
-            "UPDATE users SET subdomains = ? WHERE token = ?",
-            (
-                f"""{str(domains).strip()}""",
-                session["id"],
-            ),
-        )
-
-        return render_template("delete.html", error="SUCCESS")
-
-    else:
-        return render_template("delete.html", error=error)
-
-
 @app.route("/claim", methods=["GET", "POST"])
 def claim(error: str = ""):
     if request.method == "POST":
@@ -207,7 +162,7 @@ def dashboard(response: str = ""):
                 session["id"],
             ),
         )
-        
+
         return redirect("dashboard")
     
 
