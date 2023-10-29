@@ -3,13 +3,8 @@ from authlib.integrations.flask_client import OAuth
 from authlib.common.errors import AuthlibBaseError
 from config import *
 import sqlite3
+from main import database
 
-def use_database(query: str, values:tuple=None):
-    
-    connection = sqlite3.connect("database.db")
-    connection.execute(query, values)
-    connection.commit()
-    connection.close()
 
 
 authentication = Blueprint('authentication', __name__)
@@ -40,7 +35,16 @@ def authorize():
     token = github.authorize_access_token()
     resp = github.get('user', token=token)
     profile = resp.json()
-    use_database("INSERT INTO users (username, token) VALUES (?, ?)", (profile['login'], profile['id'],))
+
+    x = database.use_database("SELECT COUNT(*) FROM users WHERE token = ?", (profile['id'],))
+    print(x[0])
+    if int(x[0]) >= 1: #check if acct with token already exists
+        res = make_response(redirect(url_for("dashboard")))
+        res.set_cookie("id", str(profile['id']))
+        res.set_cookie("username", str(profile['login']))
+        return res
+
+    database.use_database("INSERT INTO users (username, token) VALUES (?, ?)", (profile['login'], profile['id'],))
     print(profile)
     session['id'] = profile['id']
     print(session['id'])
