@@ -153,7 +153,7 @@
               <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
                 <span class="avatar avatar-sm" style="background-image: url(./static/avatars/000m.jpg)"></span>
                 <div class="d-none d-xl-block ps-2">
-                  <div>Paweł Kuna</div>
+                  <div>{{ github_username }}</div>
                   <div class="mt-1 small text-muted">UI Designer</div>
                 </div>
               </a>
@@ -199,7 +199,7 @@
                         <a class="dropdown-item" href="./accordion.html">
                           Dashboard
                         </a>
-                        <a class="dropdown-item" href="./blank.html">
+                        <a class="dropdown-item" href="./claim">
                           Claim SubDomain
                         </a>
                         <a class="dropdown-item" href="./badges.html">
@@ -244,7 +244,7 @@
             {% for subdomain in subdomains %}
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">{{ subdomain }}</h3>
+                <h3 class="card-title">{{ subdomain.name }}</h3>
               </div>
               <div class="card-body">
                 <div class="datagrid">
@@ -269,7 +269,7 @@
                     <div class="datagrid-content">
                       <div class="d-flex align-items-center">
                         <span class="avatar avatar-xs me-2 rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                        Paweł Kuna
+                        {{ github_username }}
                       </div>
                     </div>
                   </div>

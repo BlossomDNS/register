@@ -1,3 +1,4 @@
+import json
 import sqlite3
 
 """
@@ -12,7 +13,7 @@ My java professor is cool
 class dataSQL:
     def __init__(self, dbfile):
         self.dbfile = dbfile
-        self.connection = sqlite3.connect("database.db")
+        self.connection = sqlite3.connect(self.dbfile)
 
         self.connection.execute("CREATE TABLE IF NOT EXISTS users (token TEXT, username TEXT, subdomains TEXT)")
         self.connection.commit()
@@ -28,10 +29,24 @@ class dataSQL:
     def use_database(self, query: str, values:tuple=None):
         self.connection = self.connect()
 
-
         res = self.connection.execute(query, values)
         returned_value = None
         if "select" in query.lower():
             returned_value = res.fetchone()
-        self.connection.close()
+        self.close()
         return returned_value
+    
+    def subdomains_from_token(self, session):
+        """
+        args:
+            session -> user's session (session[id])
+        
+        output:
+            if NONE then []
+            otherwise get a list of subdomains owned by x user
+        """
+        domains = self.use_database("SELECT subdomains from users where token = ?", (session,))
+        print(domains[0])
+        if domains[0] is None:
+            return []
+        return json.loads(domains[0].replace("'", '"'))

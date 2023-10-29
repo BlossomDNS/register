@@ -15,29 +15,49 @@ app.config['GITHUB_CLIENT_ID'] = CLIENT_ID
 app.config['GITHUB_CLIENT_SECRET'] = CLIENT_SECRET
 github = GitHub(app)
 
-
-
-
 cloudflare = {}
 for domain in CLOUDFLARE_DOMAINS:
     cloudflare[domain['url']] = Cloudflare(api_token=CLOUDFLARE_API_TOKEN,account_id=CLOUDFLARE_ACCOUNT_ID,zone_id=domain['cloudflare_zone_id'])
 
 
-#load_github_sites(app=app) #loads sites from github api
 @app.route('/')
-def indexnormal():
-    return render_template('home.html')
+def indexnormal(): return render_template('home.html')
 
-@app.route('/claim')
+@app.route('/claim', methods=['GET', 'POST'])
 def claim(error: str = ""):
-    return render_template("claim.html", error=error)
+    if request.method == "POST":
+
+        INPUT = request.form["dns_submission"]
+        insert = INPUT.split(".")
+        DOMAIN = insert[1]+"."+insert[2]
+
+
+        #Check if domain is taken or not / free and availiable
+        if (DOMAIN in list(cloudflare)) != True:
+            return render_template("claim.html", error="We Don't Offer That Domain")
+        
+        for x in cloudflare[DOMAIN].getDNSrecords():
+            if INPUT == x["name"]:
+                return render_template("claim.html", error="Domain already taken")
+        
+
+        domains = database.subdomains_from_token(session=session["id"])
+        domains.append(INPUT)
+
+        database.use_database("UPDATE users SET subdomains = ? WHERE token = ?", (f"""{str(domains).strip()}""", session['id'],))
+        
+        if cloudflare[DOMAIN].insert_CNAME_record(DNS_RECORD_NAME=INPUT, DNS_RECORD_CONTENT="github.com").status_code != 200:    
+            return render_template("claim.html", error="Failed to POST to Cloudflare")
+        
+        return render_template("claim.html", error="SUCCESS")
+    
+    else:
+        return render_template("claim.html", error=error)
 
 # ADMIN WEBSITE CODE
 @app.before_request
 def before_request():
     g.user = None
-    
-
     if 'user_id' in session:
         user = [x for x in ADMIN_ACCTS if x.id == session['user_id']][0]
         g.user = user
@@ -82,17 +102,13 @@ def dashboard():
             all_sub_domains.append({"name": record['name'], "type": record['type'], "content": record['content'], "id": record['id'], "proxied": record['proxied']})
     
     
-    domains = database.use_database("SELECT subdomains from users where token = ?", (session['id'],))
-    print(domains[0])
-    if domains[0] is None:
-        return render_template('dashboard.html', subdomains=[], account_id=CLOUDFLARE_ACCOUNT_ID, github_username=request.cookies.get("username"))
-    domains = json.loads(domains[0])
+    domains = database.subdomains_from_token(session=session["id"])
 
-    user_subdomains = domains
-    #for domain in domains:
-    #    for possible_domain in all_sub_domains:
-    #        if possible_domain['name'] == domain:
-    #            user_subdomains.append(possible_domain)
+    if domains == []:
+        return render_template('dashboard.html', subdomains=[], account_id=CLOUDFLARE_ACCOUNT_ID, github_username=request.cookies.get("username"))
+
+
+    user_subdomains = [possible_domain for possible_domain in all_sub_domains if possible_domain['name'] in domains]    
 
     print(user_subdomains)
     

@@ -25,19 +25,17 @@ class Cloudflare:
         }
     
     def getDNSrecords(self) -> list:
-        print(self.ZONE_ID)
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
 
         response = requests.get(url, headers=self.headers)
 
         if response.status_code == 200:
-            print(response.text)
             return json.loads(response.content)["result"]
         else:
             print("DIDN'T GET DNS RECORDS")
-            print(response.text)
 
         return 
+    
     
     #Most likely we won't use this. (clueless)
     def insert_A_record(self, DNS_RECORD_NAME:str, DNS_RECORD_CONTENT: str, PROXIED: bool = PROXIED_ON, comment:str = None):
