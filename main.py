@@ -29,6 +29,36 @@ DOMAINS = domains=list(cloudflare)
 def indexnormal():
     return render_template("home.html")
 
+@app.route("/edit", methods=["GET","POST"])
+def edit(error=""):
+    args = request.args.to_dict()
+    INPUT = args["dom"]
+    print(database.subdomains_from_token(session=session["id"]))
+    if INPUT not in database.subdomains_from_token(session=session["id"]):
+        return redirect("dashboard")
+    
+    DOMAIN = INPUT.split(".")[1]+"."+INPUT.split(".")[2]
+    DOM = cloudflare[DOMAIN].find(INPUT)
+
+    
+    if ("dom" in args and args["dom"] is not None) == False:
+        return redirect("dashboard")
+
+    if request.method == "POST":
+        print(request.form)
+        NAME = request.form["name"]
+        TYPE = request.form["type"]
+        CONTENT = request.form["content"]
+
+        id = cloudflare[DOMAIN].find(name=NAME)["id"]
+        if cloudflare[DOMAIN].update(DNS_RECORD_NAME=str(NAME),DNS_RECORD_CONTENT=CONTENT,type=TYPE, id=id).status_code == 200:
+            return redirect("dashboard")
+        else:
+            return render_template("edit.html", domain=DOM, error="FAILED TO UPDATE ON CLOUDFLARE")
+
+    
+    
+    return render_template("edit.html", domain=DOM, error=error)
 
 @app.route("/claim", methods=["GET", "POST"])
 def claim(error: str = ""):
@@ -230,4 +260,4 @@ if __name__ == "__main__":
     # from waitress import serve
     # serve(app, host="0.0.0.0", port=8080)
     app.register_blueprint(authentication)
-    app.run(host="0.0.0.0", debug=False)
+    app.run(host="0.0.0.0", debug=True)

@@ -34,18 +34,31 @@
 
 <body>
     <div class="login-card" style="justify-content: center;text-align: center;">
-        <p class="profile-name-card">Welcome to BlossomDNS<br>Write down a Subdomain you wish to claim</p>
+        <p class="profile-name-card">Welcome to BlossomDNS<br>Modify the Domain's Type and Content</p>
         <p class="profile-name-card"></p>
-        <form class="form-signin", method="POST">
-            <input class="form-control" type="text" name="dns_submission" required="" placeholder="(_____.example.com)" autofocus="">
-            
-            <select name="domain" id="domain">
-                {% for dom in domains %}
-                <option value="{{dom}}">{{dom}}</option>
-                {% endfor %}
-            </select>
+        <form class="form-signin" method="POST">
 
-            <div class="checkbox"></div><button class="btn btn-primary btn-lg d-block btn-signin w-100" type="submit">Update</button>
+
+            <p>Domain to Modify</p>
+            <input class="form-control" type="text" name="name" required="" placeholder="(_____.example.com)" autofocus="" value="{{ domain.name }}" readonly>
+            
+            <p>Type</p>
+            <select class="form-control" name="type" id="type">
+                <option value="{{domain.type}}" selected hidden>{{ domain.type }}</option> 
+                <option value="CNAME">CNAME</option>
+                <option value="A">A</option>
+                <option value="AAAA">AAAA</option>
+            </select>
+            
+            <p>Domain Content to Modify</p>
+            <input class="form-control" type="text" name="content" required="required" placeholder="DNS Content" autofocus="" value="{{ domain.content }}">
+        
+
+        
+            <p>{{ error }}</p>
+        
+            <div class="checkbox"></div>
+            <button class="btn btn-primary btn-lg d-block btn-signin w-100" type="submit">Update</button>
             <p class="profile-name-card">{{ error }}</p>
         </form>
     </div>

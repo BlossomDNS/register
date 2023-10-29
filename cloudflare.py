@@ -70,6 +70,18 @@ class Cloudflare:
         }
         return self.execute(dns_record_data=dns_record_data)
 
+
+    def update(self, DNS_RECORD_NAME: str, DNS_RECORD_CONTENT: str, type: str, id: str, PROXIED: bool = PROXIED_ON, comment: str = None,):
+        dns_record_data = {
+            "type": type,
+            "name": DNS_RECORD_NAME,  # the ___.site.com
+            "content": DNS_RECORD_CONTENT,  # target site
+            "proxied": PROXIED,
+            "comment": comment,
+        }
+        return self.put(dns_record_data=dns_record_data, id=id)
+
+
     def delete(self, identifier):
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{identifier}"
         response = requests.delete(url, headers=self.headers)
@@ -87,7 +99,14 @@ class Cloudflare:
                     return False
                 
         return False
+    
+    def find(self, name:str) -> dict:
+        x = self.getDNSrecords()
 
+        for domain in x:
+            if domain["name"]==name:
+                return domain
+                 
     def execute(self, dns_record_data):  # for post
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
         response = requests.post(
@@ -95,6 +114,14 @@ class Cloudflare:
         )
 
         return response
+
+    def put(self, id, dns_record_data):
+        url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{id}"
+        response = requests.put(
+            url, headers=self.headers, data=json.dumps(dns_record_data)
+        )
+        return response
+    
 
     def update_json(dns_record):
         with open("subdomain.json", "r") as jsonFile:
