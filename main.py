@@ -81,17 +81,16 @@ def claim(error: str = ""):
             if INPUT == x["name"]:
                 return render_template("claim.html", error="Domain already taken")
         
+        if cloudflare[DOMAIN].insert_CNAME_record(DNS_RECORD_NAME=INPUT, DNS_RECORD_CONTENT="github.com").status_code != 200:    
+            return render_template("claim.html", error="Failed to POST to Cloudflare")
+        
 
         domains = database.subdomains_from_token(session=session["id"])
-
         if database.get_from_token(need="max",session=session["id"]) <= len(domains):
             return render_template("claim.html", error="You already have a max # of domans.")
-
         domains.append(INPUT)
         database.use_database("UPDATE users SET subdomains = ? WHERE token = ?", (f"""{str(domains).strip()}""", session['id'],))
         
-        if cloudflare[DOMAIN].insert_CNAME_record(DNS_RECORD_NAME=INPUT, DNS_RECORD_CONTENT="github.com").status_code != 200:    
-            return render_template("claim.html", error="Failed to POST to Cloudflare")
         
         return render_template("claim.html", error="SUCCESS")
     
