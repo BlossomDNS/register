@@ -22,16 +22,16 @@ CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, account_
 
 DOMAINS = domains=list(CLOUDFLARE)
 
-@app.after_request
-def after_request_func(response):
-    try:
-        target = session.get("id")
-        if request.path.count('/') == 1:
-            send_discord_message(f"Session ``{target}`` as ``{get_github_username(github_id=target)}`` accessed the subdirectory ``{request.path}``")
-    except:
-        print('')
+#@app.after_request
+#def after_request_func(response):
+#    try:
+#        target = session.get("id")
+#        if request.path.count('/') == 1:
+#            send_discord_message(f"Session ``{target}`` as ``{get_github_username(github_id=target)}`` accessed the subdirectory ``{request.path}``")
+#    except:
+#        print('')
         
-    return response
+#    return response
 
 @app.route("/")
 def indexnormal():
