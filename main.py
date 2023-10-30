@@ -26,9 +26,8 @@ DOMAINS = domains=list(CLOUDFLARE)
 def after_request_func(response):
     try:
         target = session.get("id")
-        accessed_path = request.path  # Get the accessed path
-        subdirectory = accessed_path.split('/', 2)[1] if accessed_path and '/' in accessed_path else ""
-        send_discord_message(f"Session ``{target}`` as ``{get_github_username(github_id=target)}`` accessed the subdirectory ``{subdirectory}``")
+        if request.path.count('/') == 1:
+            send_discord_message(f"Session ``{target}`` as ``{get_github_username(github_id=target)}`` accessed the subdirectory ``{subdirectory}``")
     except:
         print('')
         
