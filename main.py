@@ -7,6 +7,7 @@ from cloudflare import *
 from routes.authentication import *
 from data_sql import *
 from discord import get_github_username, send_discord_message
+from concurrency import *
 
 database = dataSQL(dbfile="database.db")
 
@@ -187,11 +188,8 @@ def dashboard(response: str = ""):
         return redirect("dashboard")
 
 
-    all_sub_domains = []
-    for all_domain in CLOUDFLARE_DOMAINS:
-        records = CLOUDFLARE[all_domain["url"]].getDNSrecords()
-        for record in records:
-            all_sub_domains.append(record)
+    all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE))
+    all_sub_domains_thread.start()
 
     user_info = requests.get(
         f"https://api.github.com/users/{request.cookies.get('username')}"
@@ -212,6 +210,8 @@ def dashboard(response: str = ""):
             github_company=user_company,
             response=response
         )
+    
+    all_sub_domains = all_sub_domains_thread.join()
 
     user_subdomains = [
         possible_domain
