@@ -1,5 +1,6 @@
 import requests
 from config import WEBHOOK_URL
+from data_sql import dataSQL
 
 def send_discord_message(content):
     """
@@ -27,29 +28,18 @@ def send_discord_message(content):
         return False
     
 def get_github_username(github_id):
+    
     """
     Get the GitHub username of a user based on their GitHub ID.
 
     Args:
-        github_id (str): The GitHub user ID.
+        github_id (str): Session["id"] - connected to SQL
 
     Returns:
         str: The GitHub username if found, or None if the user is not found.
     """
     try:
-        # Create the GitHub API URL
-        github_api_url = f'https://api.github.com/user/{github_id}'
-
-        # Make an HTTP GET request to the GitHub API
-        response = requests.get(github_api_url)
-
-        if response.status_code == 200:
-            user_info = response.json()
-            return user_info.get('login')
-        elif response.status_code == 404:
-            print(f'GitHub user with ID {github_id} not found.')
-        else:
-            print(f'Failed to retrieve user information. Status code: {response.status_code}')
+        return dataSQL(dbfile="database.db").get_from_token(need="username", session=github_id)
     except Exception as e:
         print(f'An error occurred: {str(e)}')
 

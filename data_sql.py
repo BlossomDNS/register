@@ -71,7 +71,7 @@ class dataSQL:
 
     def get_from_token(self, need, session):
         out = self.use_database(
-            "SELECT " + need + " from users where token = ?", (session,)
+            f"SELECT {need} from users where token = ?", (session,)
         )
         return out[0]
     
