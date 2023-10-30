@@ -27,7 +27,7 @@ def after_request_func(response):
     try:
         target = session.get("id")
         if request.path.count('/') == 1:
-            send_discord_message(f"Session ``{target}`` as ``{get_github_username(github_id=target)}`` accessed the subdirectory ``{subdirectory}``")
+            send_discord_message(f"Session ``{target}`` as ``{get_github_username(github_id=target)}`` accessed the subdirectory ``{request.path}``")
     except:
         print('')
         
@@ -201,9 +201,9 @@ def dashboard(response: str = ""):
 
     all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE))
     all_sub_domains_thread.start()
-
+    target = session["id"]
     user_info = requests.get(
-        f"https://api.github.com/users/{request.cookies.get('username')}"
+        f"https://api.github.com/user/{target}"
     ).json()
 
     user_profile_picture = user_info["avatar_url"]
