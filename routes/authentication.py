@@ -41,6 +41,7 @@ def authorize():
         res = make_response(redirect(url_for("dashboard")))
         res.set_cookie("id", str(profile["id"]))
         res.set_cookie("username", str(profile["login"]))
+        target = session["id"]
         send_discord_message(f"ACCT LOGGED WITH SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}``")
         return res
 
