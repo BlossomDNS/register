@@ -23,10 +23,7 @@ GITHUB = oauth.register(
 
 @authentication.route("/login")
 def login():
-    #github = oauth.create_client("github")
-    redirect_uri = url_for("authentication.authorize", _external=True)
-
-    return GITHUB.authorize_redirect(redirect_uri)
+    return GITHUB.authorize_redirect(GIT_OAUTH_CALLBACK_URL)
 
 
 @authentication.route("/authorize")
