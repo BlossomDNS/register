@@ -27,6 +27,8 @@ def indexnormal():
 
 @app.route("/edit", methods=["GET","POST"])
 def edit(error=""):
+    if "id" not in session:
+        return redirect("login")
     args = request.args.to_dict()
     INPUT = args["dom"]
     print(database.subdomains_from_token(session=session["id"]))
@@ -60,6 +62,9 @@ def edit(error=""):
 
 @app.route("/claim", methods=["GET", "POST"])
 def claim(error: str = ""):
+    if "id" not in session:
+        return redirect("login")
+
     if request.method == "POST":
         INPUT = request.form["dns_submission"]
         if len(INPUT.split(".")) > 1: #counter subdomains with periods
@@ -111,6 +116,7 @@ def before_request():
         g.user = user
 
 
+
 @app.route("/admin", methods=["GET", "POST"])  # admin site soon
 def admin():
     if not g.user:
@@ -154,6 +160,9 @@ def admin():
 
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard(response: str = ""):
+    if "id" not in session:
+        return redirect(url_for("login"))
+    
     args = request.args.to_dict()
     if "delete" in args and args["delete"] is not None:
 
