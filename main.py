@@ -161,7 +161,7 @@ def admin():
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard(response: str = ""):
     if "id" not in session:
-        return redirect(url_for("login"))
+        return redirect("login")
     
     args = request.args.to_dict()
     if "delete" in args and args["delete"] is not None:
