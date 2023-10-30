@@ -52,9 +52,9 @@ def authorize():
             profile["id"],
         ),
     )
-    print(profile)
+    #print(profile)
     session["id"] = profile["id"]
-    print(session["id"])
+    #print(session["id"])
     res = make_response(redirect(url_for("dashboard")))
     res.set_cookie("id", str(profile["id"]))
     res.set_cookie("username", str(profile["login"]))
