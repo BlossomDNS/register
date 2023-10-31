@@ -24,12 +24,13 @@ DOMAINS = domains = list(CLOUDFLARE)
 
 @app.after_request
 def after_request_func(response):
-    try:
-        target = session.get("id")
-        if request.path.count('/') == 1:
-            send_discord_message(f"Session ``{target}`` as ``{get_github_username(github_id=target)}`` accessed the subdirectory ``{request.path}``")
-    except:
-        print('')
+    if session.get("id") != None:
+        try:
+            target = session.get("id")
+            if request.path.count('/') == 1:
+                send_discord_message(f"Session ``{target}`` as ``{get_github_username(github_id=target)}`` accessed the subdirectory ``{request.path}``")
+        except:
+            print('')
         
     return response
 
