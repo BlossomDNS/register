@@ -39,6 +39,9 @@ def indexnormal():
 
 @app.route("/edit", methods=["GET","POST"])
 def edit(error=""):
+    if "id" not in session:
+        return redirect("/")
+    
     args = request.args.to_dict()
     INPUT = args["dom"]
     print(database.subdomains_from_token(session=session["id"]))
@@ -72,6 +75,8 @@ def edit(error=""):
 
 @app.route("/claim", methods=["GET", "POST"])
 def claim(error: str = ""):
+    if "id" not in session:
+        return redirect("/")
 
     if request.method == "POST":
         INPUT = request.form["dns_submission"]
@@ -122,12 +127,6 @@ def before_request():
         user = [x for x in ADMIN_ACCTS if x.id == session["user_id"]][0]
         g.user = user
     
-    
-    if "id" not in session:
-        if request.path not in ["/login","/authorize","/"]:
-            print(request.path)
-            return redirect("login")
-    
 
 
 
@@ -174,6 +173,8 @@ def admin():
 
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard(response: str = ""):
+    if "id" not in session:
+        return redirect("login")
     
     args = request.args.to_dict()
     if "delete" in args and args["delete"] is not None:
