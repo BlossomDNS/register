@@ -122,8 +122,12 @@ def before_request():
         user = [x for x in ADMIN_ACCTS if x.id == session["user_id"]][0]
         g.user = user
     
+    
     if "id" not in session:
-        return redirect("login")
+        if request.path not in ["/login","/authorize","/"]:
+            print(request.path)
+            return redirect("login")
+    
 
 
 
