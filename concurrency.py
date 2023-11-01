@@ -1,6 +1,6 @@
 from threading import Thread
 
-from fastapi import requests
+import requests
 
 '''
 concurrency.py

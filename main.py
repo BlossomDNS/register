@@ -201,16 +201,19 @@ def dashboard(response: str = ""):
         return redirect("dashboard")
 
 
-    all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE)).start()    
+    all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE)).start()
+    
     target = session["id"]
     user_info = ThreadWithReturnValue(target=get_github_username, args=target).start()
+    
+    user_info = requests.get(
+        f"https://api.github.com/user/{target}"
+    ).json()
 
-
-    domains = database.subdomains_from_token(session=session["id"])
-
-    user_info = user_info.join()
     user_profile_picture = user_info["avatar_url"]
     user_company = user_info["company"]
+
+    domains = database.subdomains_from_token(session=session["id"])
     
     if domains == []:
         return render_template(
