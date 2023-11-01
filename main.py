@@ -204,7 +204,6 @@ def dashboard(response: str = ""):
     all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE)).start()
     
     target = session["id"]
-    user_info = ThreadWithReturnValue(target=get_github_username, args=target).start()
     
     user_info = requests.get(
         f"https://api.github.com/user/{target}"
