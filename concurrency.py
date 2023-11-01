@@ -1,7 +1,5 @@
 from threading import Thread
 
-import requests
-
 '''
 concurrency.py
 
@@ -30,9 +28,3 @@ def cloudf_doms(CLOUDFLARE_DOMAINS, CLOUDFLARE) -> list:
         for record in records:
             all_sub_domains.append(record)
     return all_sub_domains
-
-def git_github(target: str) -> str:
-    user_info = requests.get(
-        f"https://api.github.com/user/{target}"
-    ).json()
-    return user_info

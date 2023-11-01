@@ -201,8 +201,8 @@ def dashboard(response: str = ""):
         return redirect("dashboard")
 
 
-    all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE)).start()
-    
+    all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE))
+    all_sub_domains_thread.start()
     target = session["id"]
     
     user_info = requests.get(
