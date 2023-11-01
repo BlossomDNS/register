@@ -20,7 +20,7 @@ app.config["GITHUB_CLIENT_SECRET"] = CLIENT_SECRET
 CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, account_id=CLOUDFLARE_ACCOUNT_ID, zone_id=domain["cloudflare_zone_id"]) for domain in CLOUDFLARE_DOMAINS}
 
 
-DOMAINS = domains = list(CLOUDFLARE)
+DOMAINS = list(CLOUDFLARE)
 
 @app.after_request
 def after_request_func(response):
@@ -30,7 +30,7 @@ def after_request_func(response):
             if request.path.count('/') == 1:
                 send_discord_message(f"Session ``{target}`` as ``{get_github_username(github_id=target)}`` accessed the subdirectory ``{request.path}``")
         except:
-            print('')
+            ...
         
     return response
 
@@ -201,18 +201,16 @@ def dashboard(response: str = ""):
         return redirect("dashboard")
 
 
-    all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE))
-    all_sub_domains_thread.start()
+    all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE)).start()    
     target = session["id"]
-    user_info = requests.get(
-        f"https://api.github.com/user/{target}"
-    ).json()
-
-    user_profile_picture = user_info["avatar_url"]
-    user_company = user_info["company"]
+    user_info = ThreadWithReturnValue(target=get_github_username, args=target).start()
 
 
     domains = database.subdomains_from_token(session=session["id"])
+
+    user_info = user_info.join()
+    user_profile_picture = user_info["avatar_url"]
+    user_company = user_info["company"]
     
     if domains == []:
         return render_template(

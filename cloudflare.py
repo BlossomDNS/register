@@ -8,7 +8,7 @@ Sending requests to cloudflare
 
 """
 
-import requests
+from fastapi import requests
 import json
 from cloudflare import *
 from config import *
