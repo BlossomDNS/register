@@ -19,6 +19,7 @@ class Cloudflare:
         self.API_TOKEN = api_token
         self.ACCOUNT_ID = account_id
         self.ZONE_ID = zone_id
+        self.session = requests.Session()
 
         self.headers = {
             "Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}",
@@ -28,7 +29,7 @@ class Cloudflare:
     def getDNSrecords(self) -> list:
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
 
-        response = requests.get(url, headers=self.headers)
+        response = self.session.get(url, headers=self.headers)
 
         if response.status_code == 200:
             return json.loads(response.content)["result"]
@@ -84,7 +85,7 @@ class Cloudflare:
 
     def delete(self, identifier):
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{identifier}"
-        response = requests.delete(url, headers=self.headers)
+        response = self.session.delete(url, headers=self.headers)
 
         return response
     
@@ -109,7 +110,7 @@ class Cloudflare:
                  
     def execute(self, dns_record_data):  # for post
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
-        response = requests.post(
+        response = self.session.post(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
 
@@ -117,23 +118,10 @@ class Cloudflare:
 
     def put(self, id, dns_record_data):
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{id}"
-        response = requests.put(
+        response = self.session.put(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
         return response
-    
-
-    def update_json(dns_record):
-        with open("subdomain.json", "r") as jsonFile:
-            data = json.load(jsonFile)
-
-        data[dns_record["name"].split(".")[0]] = {
-            "target": dns_record["content"],
-            "type": dns_record["type"],
-        }
-
-        with open("subdomain.json", "w") as jsonFile:
-            json.dump(data, jsonFile)
 
 
 # inserts A_record
