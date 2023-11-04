@@ -1,5 +1,5 @@
 from concurrency import *
-from cloudflare import *
+from cloudflare import Cloudflare, CLOUDFLARE_API_TOKEN, CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID
 
 from config import CLOUDFLARE_DOMAINS
 CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, account_id=CLOUDFLARE_ACCOUNT_ID, zone_id=domain["cloudflare_zone_id"]) for domain in CLOUDFLARE_DOMAINS}

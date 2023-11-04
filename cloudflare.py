@@ -12,7 +12,6 @@ import requests
 import json
 from cloudflare import *
 from config import *
-from cache import cache_instance
 
 
 
@@ -88,6 +87,7 @@ class Cloudflare:
     def delete(self, identifier):
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{identifier}"
         response = self.session.delete(url, headers=self.headers)
+        from cache import cache_instance
         cache_instance.get_subdomains(force_refresh=True)
         return response
     
@@ -115,6 +115,7 @@ class Cloudflare:
         response = self.session.post(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
+        from cache import cache_instance
         cache_instance.add_subdomain(response.json())
         
         return response
