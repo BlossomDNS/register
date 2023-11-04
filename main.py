@@ -103,17 +103,17 @@ def claim(error: str = ""):
                 "claim.html", error="You already have a max # of domans."
             )
 
-
+        target = session["id"]
         #Give user the subdomain
         if (
             CLOUDFLARE[DOMAIN]
-            .insert_CNAME_record(DNS_RECORD_NAME=INPUT+"."+DOMAIN, DNS_RECORD_CONTENT="github.com")
+            .insert_CNAME_record(DNS_RECORD_NAME=INPUT+"."+DOMAIN, DNS_RECORD_CONTENT="github.com",comment=f"OWNER RESPONSIBLE IS {target} as {get_github_username(github_id=target)}")
             .status_code
             != 200
         ): return render_template("claim.html", error="Failed to POST to Cloudflare", domains=DOMAINS)        
         
         database.new_subdomain(token=session["id"],subdomain=INPUT+"."+DOMAIN)
-        target = session["id"]
+        
         send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{INPUT}.{DOMAIN}``")
         return redirect("dashboard")
 

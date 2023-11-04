@@ -113,3 +113,12 @@ class dataSQL:
             return True
         except:
             return False
+    
+    def owner_of_subdmain(self, subdomain) -> int:
+        self.connection = self.connect()
+        self.cursor = self.connection.cursor()
+        self.cursor.execute(f'SELECT Token FROM subdomains WHERE subdomain = "{subdomain}";')
+        token = self.cursor.fetchone()[0]
+        self.cursor.close()
+        self.close()
+        return token
