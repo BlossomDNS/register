@@ -85,7 +85,6 @@ def claim(error: str = ""):
             return render_template("claim.html", error="Inappropriate Choice", domains=DOMAINS)
         
         DOMAIN = request.form["domain"]
-        print(DOMAIN)
 
         # Check if domain is taken or not / free and availiable
         if (DOMAIN in set(CLOUDFLARE)) != True:
