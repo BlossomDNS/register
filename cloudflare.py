@@ -12,6 +12,8 @@ import requests
 import json
 from cloudflare import *
 from config import *
+from threading import Thread
+
 
 
 class Cloudflare:
@@ -86,7 +88,8 @@ class Cloudflare:
     def delete(self, identifier):
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{identifier}"
         response = self.session.delete(url, headers=self.headers)
-
+        from cache import cache_instance
+        cache_instance.get_subdomains(force_refresh=True)
         return response
     
     def find_and_delete(self, name: str) -> bool:
@@ -109,11 +112,15 @@ class Cloudflare:
                 return domain
                  
     def execute(self, dns_record_data):  # for post
+        yes = Thread(target=cache_instance.get_subdomains, args=(True,))
+        yes.start()
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
         response = self.session.post(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
+        from cache import cache_instance
 
+        yes.join()
         return response
 
     def put(self, id, dns_record_data):

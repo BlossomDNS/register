@@ -8,6 +8,7 @@ from routes.authentication import *
 from data_sql import *
 from discord import get_github_username, send_discord_message
 from concurrency import *
+from cache import cache_instance
 
 database = dataSQL(dbfile="database.db")
 
@@ -21,6 +22,7 @@ CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, account_
 
 
 DOMAINS = set(CLOUDFLARE)
+
 
 @app.after_request
 def after_request_func(response):
@@ -186,7 +188,7 @@ def dashboard(response: str = ""):
         return redirect("login")
     domains_thread = ThreadWithReturnValue(target=database.subdomains_from_token, args=(session["id"],))
     domains_thread.start()
-    all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE))
+    all_sub_domains_thread = ThreadWithReturnValue(target=cache_instance.get_subdomains)
     all_sub_domains_thread.start()
     target = session["id"]
     
@@ -232,24 +234,28 @@ def dashboard(response: str = ""):
         return render_template(
             "dashboard.html",
             subdomains=[],
-            github_username=request.cookies.get("username"),
+            github_username=session["username"],
             github_profile=user_profile_picture,
             github_company=user_company,
             response=response
         )
     
     all_sub_domains = all_sub_domains_thread.join()
-
-    user_subdomains = [
-        possible_domain
-        for possible_domain in all_sub_domains
-        if possible_domain["name"] in domains
-    ]
+    try:
+        
+            user_subdomains = [
+            possible_domain
+            for possible_domain in all_sub_domains
+            if possible_domain["name"] in domains
+        ]
+    except Exception as e:
+        print(e)
+        user_subdomains = []
 
     return render_template(
         "dashboard.html",
         subdomains=user_subdomains,
-        github_username=request.cookies.get("username"),
+        github_username=session["username"],
         github_profile=user_profile_picture,
         github_company=user_company,
         response=response

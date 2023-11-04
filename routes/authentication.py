@@ -5,6 +5,7 @@ from config import *
 import sqlite3
 from main import database
 from discord import *
+from concurrency import *
 
 authentication = Blueprint("authentication", __name__)
 oauth = OAuth(current_app)
@@ -38,26 +39,28 @@ def authorize():
     )
     if int(x[0]) >= 1:  # check if acct with token already exists
         session["id"] = profile["id"]
-        res = make_response(redirect(url_for("dashboard")))
-        res.set_cookie("id", str(profile["id"]))
-        res.set_cookie("username", str(profile["login"]))
+
+        session["id"] =  str(profile["id"])
+        session["username"] = str(profile["login"])
         target = session["id"]
         send_discord_message(f"ACCT LOGGED WITH SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}``")
-        return res
+        return redirect("dashboard")
 
-    database.use_database(
+    db_thread = Thread(target=dataSQL(dbfile="database.db").use_database, args=(
         "INSERT INTO users (username, token) VALUES (?, ?)",
         (
             profile["login"],
             profile["id"],
         ),
     )
+    )
+    db_thread.start()
     #print(profile)
     session["id"] = profile["id"]
     #print(session["id"])
-    res = make_response(redirect(url_for("dashboard")))
-    res.set_cookie("id", str(profile["id"]))
-    res.set_cookie("username", str(profile["login"]))
+    session["id"] =  str(profile["id"])
+    session["username"] = str(profile["login"])
     target = session["id"]
-    send_discord_message(f":green_heart: :green_heart: :green_heart: NEW ACCT CREATED! SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}``")
-    return res
+    Thread(target=send_discord_message, args=(f":green_heart: :green_heart: :green_heart: NEW ACCT CREATED! SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}``"),).start()
+    db_thread.join()
+    redirect("dashboard")
