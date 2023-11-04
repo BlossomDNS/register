@@ -241,7 +241,6 @@ def dashboard(response: str = ""):
         )
     
     all_sub_domains = all_sub_domains_thread.join()
-    print(all_sub_domains)
     try:
         
             user_subdomains = [
