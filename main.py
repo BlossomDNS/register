@@ -12,7 +12,7 @@ from concurrency import *
 database = dataSQL(dbfile="database.db")
 
 app = Flask(__name__)
-app.secret_key = "somesecretkeythatonlyishouldknow"
+app.secret_key = SECRET_KEY
 app.config["GITHUB_CLIENT_ID"] = CLIENT_ID
 app.config["GITHUB_CLIENT_SECRET"] = CLIENT_SECRET
 #GITHUB = GitHub(app)
@@ -78,43 +78,52 @@ def edit(error=""):
 def claim(error: str = ""):
     if "id" not in session:
         return redirect("/")
+    target = session["id"]
+    domains_thread = ThreadWithReturnValue(target=database.subdomains_from_token, args = (target,))
+    domains_thread.start()
+    max_domains_thread = ThreadWithReturnValue(target=dataSQL(dbfile="database.db").get_from_token, args=("max", target,))
+    max_domains_thread.start()
+
 
     if request.method == "POST":
         INPUT = request.form["dns_submission"]
-        if len(INPUT.split(".")) > 1: #counter subdomains with periods
-            return render_template("claim.html", error="Inappropriate Choice", domains=DOMAINS)
-        
         DOMAIN = request.form["domain"]
 
-        # Check if domain is taken or not / free and availiable
-        if (DOMAIN in set(CLOUDFLARE)) != True:
+        if len(INPUT.split(".")) > 1:
+            return render_template("claim.html", error="Inappropriate Choice", domains=DOMAINS)
+
+        if DOMAIN not in CLOUDFLARE:
             return render_template("claim.html", error="We Don't Offer That Domain", domains=DOMAINS)
 
         for x in CLOUDFLARE[DOMAIN].getDNSrecords():
             if INPUT == x["name"]:
                 return render_template("claim.html", error="Domain already taken", domains=DOMAINS)
-            
-            print(INPUT+"."+DOMAIN)
-        
-        domains = database.subdomains_from_token(session=session["id"])
-        if database.get_from_token(need="max", session=session["id"]) <= len(domains):
-            return render_template(
-                "claim.html", error="You already have a max # of domans."
-            )
 
-        target = session["id"]
-        #Give user the subdomain
-        if (
-            CLOUDFLARE[DOMAIN]
-            .insert_CNAME_record(DNS_RECORD_NAME=INPUT+"."+DOMAIN, DNS_RECORD_CONTENT="github.com",comment=f"OWNER RESPONSIBLE IS {target} as {get_github_username(github_id=target)}")
-            .status_code
-            != 200
-        ): return render_template("claim.html", error="Failed to POST to Cloudflare", domains=DOMAINS)        
+        max_domains = max_domains_thread.join()
+        domains = domains_thread.join()
+        if max_domains <= len(domains):
+            return render_template("claim.html", error="You already have the maximum number of domains.")
+
         
-        database.new_subdomain(token=session["id"],subdomain=INPUT+"."+DOMAIN)
-        
-        send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{INPUT}.{DOMAIN}``")
+        subdomain = f"{INPUT}.{DOMAIN}"
+
+        # Give the user the subdomain
+        response = CLOUDFLARE[DOMAIN].insert_CNAME_record(
+            DNS_RECORD_NAME=subdomain,
+            DNS_RECORD_CONTENT="github.com",
+            comment=f"OWNER RESPONSIBLE IS {target} as {get_github_username(github_id=target)}"
+        )
+
+        if response.status_code != 200:
+            Thread(target=send_discord_message, args = (response.text,)).start()
+            return render_template("claim.html", error=response.json()['errors'][0]['error_chain'][0]['message'], domains=DOMAINS)
+
+        database.new_subdomain(token=session["id"], subdomain=subdomain)
+
+        Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{subdomain}``",)).start()
+
         return redirect("dashboard")
+
 
     else:
         return render_template("claim.html", error=error, domains=DOMAINS)
@@ -175,6 +184,18 @@ def admin():
 def dashboard(response: str = ""):
     if "id" not in session:
         return redirect("login")
+    domains_thread = ThreadWithReturnValue(target=database.subdomains_from_token, args=(session["id"],))
+    domains_thread.start()
+    all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE))
+    all_sub_domains_thread.start()
+    target = session["id"]
+    
+    user_info_thread = ThreadWithReturnValue(target=requests.get,
+        kwargs={'url': f"https://api.github.com/user/{target}", "headers": {'Authorization': 'token ' + GITHUB_TOKEN}}
+        
+        
+    )
+    user_info_thread.start()
     
     args = request.args.to_dict()
     if "delete" in args and args["delete"] is not None:
@@ -186,8 +207,7 @@ def dashboard(response: str = ""):
         DOMAIN = insert[1] + "." + insert[2]
 
 
-
-        domains = database.subdomains_from_token(session=session["id"])
+        domains = domains_thread.join()
         if (INPUT in domains) == False: #if user doesn't own domain, return them back
             return redirect("dashboard")
 
@@ -200,20 +220,14 @@ def dashboard(response: str = ""):
         return redirect("dashboard")
 
 
-    all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE))
-    all_sub_domains_thread.start()
-    target = session["id"]
-    
-    user_info = requests.get(
-        f"https://api.github.com/user/{target}",
-        headers = {'Authorization': 'token ' + GITHUB_TOKEN}
-    ).json()
 
+
+    user_info = user_info_thread.join().json()
     user_profile_picture = user_info["avatar_url"]
     user_company = user_info["company"]
 
-    domains = database.subdomains_from_token(session=session["id"])
     
+    domains = domains_thread.join()
     if domains == []:
         return render_template(
             "dashboard.html",
