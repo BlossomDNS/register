@@ -242,13 +242,16 @@ def dashboard(response: str = ""):
         )
     
     all_sub_domains = all_sub_domains_thread.join()
+    print(all_sub_domains)
     try:
+        
             user_subdomains = [
             possible_domain
             for possible_domain in all_sub_domains
             if possible_domain["name"] in domains
         ]
-    except:
+    except Exception as e:
+        print(e)
         user_subdomains = []
 
     return render_template(
