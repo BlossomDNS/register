@@ -239,12 +239,14 @@ def dashboard(response: str = ""):
         )
     
     all_sub_domains = all_sub_domains_thread.join()
-
-    user_subdomains = [
-        possible_domain
-        for possible_domain in all_sub_domains
-        if possible_domain["name"] in domains
-    ]
+    try:
+            user_subdomains = [
+            possible_domain
+            for possible_domain in all_sub_domains
+            if possible_domain["name"] in domains
+        ]
+    except:
+        user_subdomains = []
 
     return render_template(
         "dashboard.html",
