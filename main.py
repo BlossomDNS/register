@@ -78,44 +78,51 @@ def edit(error=""):
 def claim(error: str = ""):
     if "id" not in session:
         return redirect("/")
+    target = session["id"]
+    domains_thread = ThreadWithReturnValue(target=database.subdomains_from_token, args = (target,))
+    domains_thread.start()
+    max_domains_thread = ThreadWithReturnValue(target=database.get_from_token("max", target,))
+    max_domains_thread.start()
+
 
     if request.method == "POST":
         INPUT = request.form["dns_submission"]
-        if len(INPUT.split(".")) > 1: #counter subdomains with periods
-            return render_template("claim.html", error="Inappropriate Choice", domains=DOMAINS)
-        
         DOMAIN = request.form["domain"]
-        print(DOMAIN)
 
-        # Check if domain is taken or not / free and availiable
-        if (DOMAIN in set(CLOUDFLARE)) != True:
+        if len(INPUT.split(".")) > 1:
+            return render_template("claim.html", error="Inappropriate Choice", domains=DOMAINS)
+
+        if DOMAIN not in CLOUDFLARE:
             return render_template("claim.html", error="We Don't Offer That Domain", domains=DOMAINS)
 
         for x in CLOUDFLARE[DOMAIN].getDNSrecords():
             if INPUT == x["name"]:
                 return render_template("claim.html", error="Domain already taken", domains=DOMAINS)
-            
-            print(INPUT+"."+DOMAIN)
-        
-        domains = database.subdomains_from_token(session=session["id"])
-        if database.get_from_token(need="max", session=session["id"]) <= len(domains):
-            return render_template(
-                "claim.html", error="You already have a max # of domans."
-            )
 
-        target = session["id"]
-        #Give user the subdomain
-        if (
-            CLOUDFLARE[DOMAIN]
-            .insert_CNAME_record(DNS_RECORD_NAME=INPUT+"."+DOMAIN, DNS_RECORD_CONTENT="github.com",comment=f"OWNER RESPONSIBLE IS {target} as {get_github_username(github_id=target)}")
-            .status_code
-            != 200
-        ): return render_template("claim.html", error="Failed to POST to Cloudflare", domains=DOMAINS)        
+        max_domains = max_domains_thread.join()
+        domains = domains_thread.join()
+        if max_domains <= len(domains):
+            return render_template("claim.html", error="You already have the maximum number of domains.")
+
         
-        database.new_subdomain(token=session["id"],subdomain=INPUT+"."+DOMAIN)
-        
-        send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{INPUT}.{DOMAIN}``")
+        subdomain = f"{INPUT}.{DOMAIN}"
+
+        # Give the user the subdomain
+        response = CLOUDFLARE[DOMAIN].insert_CNAME_record(
+            DNS_RECORD_NAME=subdomain,
+            DNS_RECORD_CONTENT="github.com",
+            comment=f"OWNER RESPONSIBLE IS {target} as {get_github_username(github_id=target)}"
+        )
+
+        if response.status_code != 200:
+            return render_template("claim.html", error="Failed to POST to Cloudflare", domains=DOMAINS)
+
+        database.new_subdomain(token=session["id"], subdomain=subdomain)
+
+        Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{subdomain}``",)).start()
+
         return redirect("dashboard")
+
 
     else:
         return render_template("claim.html", error=error, domains=DOMAINS)
