@@ -8,10 +8,10 @@ CLOUDFLARE_ACCOUNT_ID = ""
 PROXIED_ON = True
 TTL_INT = 300
 #domain you are giving subdomains away
-CLOUDFLARE_DOMAINS = [{"url":"cool-web.site", "cloudflare_zone_id": ""},
-                    {"url":"pro-dev.app", "cloudflare_zone_id": ""},
-                    {"url":"pro-dev.site", "cloudflare_zone_id": ""},
-                    {"url":"py-dev.io", "cloudflare_zone_id": ""}]
+CLOUDFLARE_DOMAINS = [{"url":"", "cloudflare_zone_id": ""},
+                    {"url":"", "cloudflare_zone_id": ""},
+                    {"url":"", "cloudflare_zone_id": ""},
+                    {"url":"", "cloudflare_zone_id": ""}]
 #admin
 import admins
 ADMIN_ACCTS = [
@@ -21,12 +21,12 @@ ADMIN_ACCTS = [
 #git auth
 CLIENT_SECRET = ""
 CLIENT_ID = ""
-GIT_OAUTH_CALLBACK_URL = "https://cool-web.site/authorize"
+GIT_OAUTH_CALLBACK_URL = "https://(DOMAIN_USED_FOR_HOSTING)/authorize"
 GITHUB_TOKEN = ""
 #discord webhook_url
 WEBHOOK_URL=""
 
 #port for server it is being hosted on 
-PORT = 27024
+PORT = (integer)
 
 SECRET_KEY = ""
