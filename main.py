@@ -8,7 +8,7 @@ from routes.authentication import *
 from data_sql import *
 from discord import get_github_username, send_discord_message
 from concurrency import *
-from cache import Cache
+from cache import cache_instance
 
 database = dataSQL(dbfile="database.db")
 
@@ -23,7 +23,6 @@ CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, account_
 
 DOMAINS = set(CLOUDFLARE)
 
-CACHE = Cache()
 
 @app.after_request
 def after_request_func(response):
@@ -189,7 +188,7 @@ def dashboard(response: str = ""):
         return redirect("login")
     domains_thread = ThreadWithReturnValue(target=database.subdomains_from_token, args=(session["id"],))
     domains_thread.start()
-    all_sub_domains_thread = ThreadWithReturnValue(target=CACHE.get_subdomains)
+    all_sub_domains_thread = ThreadWithReturnValue(target=cache_instance.get_subdomains)
     all_sub_domains_thread.start()
     target = session["id"]
     
