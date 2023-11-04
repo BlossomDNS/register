@@ -20,7 +20,7 @@ app.config["GITHUB_CLIENT_SECRET"] = CLIENT_SECRET
 CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, account_id=CLOUDFLARE_ACCOUNT_ID, zone_id=domain["cloudflare_zone_id"]) for domain in CLOUDFLARE_DOMAINS}
 
 
-DOMAINS = list(CLOUDFLARE)
+DOMAINS = set(CLOUDFLARE)
 
 @app.after_request
 def after_request_func(response):
@@ -88,7 +88,7 @@ def claim(error: str = ""):
         print(DOMAIN)
 
         # Check if domain is taken or not / free and availiable
-        if (DOMAIN in list(CLOUDFLARE)) != True:
+        if (DOMAIN in set(CLOUDFLARE)) != True:
             return render_template("claim.html", error="We Don't Offer That Domain", domains=DOMAINS)
 
         for x in CLOUDFLARE[DOMAIN].getDNSrecords():
@@ -206,7 +206,8 @@ def dashboard(response: str = ""):
     target = session["id"]
     
     user_info = requests.get(
-        f"https://api.github.com/user/{target}"
+        f"https://api.github.com/user/{target}",
+        headers = {'Authorization': 'token ' + GITHUB_TOKEN}
     ).json()
 
     user_profile_picture = user_info["avatar_url"]
