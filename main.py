@@ -189,7 +189,7 @@ def dashboard(response: str = ""):
         return redirect("login")
     domains_thread = ThreadWithReturnValue(target=database.subdomains_from_token, args=(session["id"],))
     domains_thread.start()
-    all_sub_domains_thread = ThreadWithReturnValue(target=CACHE.all_sub_domains)
+    all_sub_domains_thread = ThreadWithReturnValue(target=CACHE.get_subdomains)
     all_sub_domains_thread.start()
     target = session["id"]
     
