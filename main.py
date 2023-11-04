@@ -176,6 +176,8 @@ def admin():
 def dashboard(response: str = ""):
     if "id" not in session:
         return redirect("login")
+    domains_thread = ThreadWithReturnValue(target=database.subdomains_from_token, args=(session["id"],))
+    domains_thread.start()
     
     args = request.args.to_dict()
     if "delete" in args and args["delete"] is not None:
@@ -187,8 +189,7 @@ def dashboard(response: str = ""):
         DOMAIN = insert[1] + "." + insert[2]
 
 
-
-        domains = database.subdomains_from_token(session=session["id"])
+        domains = domains_thread.join()
         if (INPUT in domains) == False: #if user doesn't own domain, return them back
             return redirect("dashboard")
 
@@ -213,8 +214,8 @@ def dashboard(response: str = ""):
     user_profile_picture = user_info["avatar_url"]
     user_company = user_info["company"]
 
-    domains = database.subdomains_from_token(session=session["id"])
     
+    domains = domains_thread.join()
     if domains == []:
         return render_template(
             "dashboard.html",
