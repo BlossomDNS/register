@@ -232,7 +232,7 @@ def dashboard(response: str = ""):
         return render_template(
             "dashboard.html",
             subdomains=[],
-            github_username=request.cookies.get("username"),
+            github_username=session["username"],
             github_profile=user_profile_picture,
             github_company=user_company,
             response=response
@@ -249,7 +249,7 @@ def dashboard(response: str = ""):
     return render_template(
         "dashboard.html",
         subdomains=user_subdomains,
-        github_username=request.cookies.get("username"),
+        github_username=session["username"],
         github_profile=user_profile_picture,
         github_company=user_company,
         response=response
