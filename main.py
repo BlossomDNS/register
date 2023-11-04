@@ -116,7 +116,7 @@ def claim(error: str = ""):
 
         if response.status_code != 200:
             Thread(target=send_discord_message, args = (response.text,)).start()
-            return render_template("claim.html", error="Failed to POST to Cloudflare", domains=DOMAINS)
+            return render_template("claim.html", error=response.json()['errors'][0]['error_chain'][0]['message'], domains=DOMAINS)
 
         database.new_subdomain(token=session["id"], subdomain=subdomain)
 
