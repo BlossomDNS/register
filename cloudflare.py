@@ -12,6 +12,7 @@ import requests
 import json
 from cloudflare import *
 from config import *
+from threading import Thread
 
 
 
@@ -116,7 +117,7 @@ class Cloudflare:
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
         from cache import cache_instance
-        cache_instance.add_subdomain(response.json())
+        Thread(target=cache_instance.get_subdomains, args=(True,)).start()
         
         return response
 
