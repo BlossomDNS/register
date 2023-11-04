@@ -13,4 +13,5 @@ class Cache():
         if self.all_sub_domains == []:
             all_domains = cloudf_doms(CLOUDFLARE_DOMAINS, CLOUDFLARE)
             self.all_sub_domains = all_domains
-            return all_domains
+            
+        return self.all_sub_domains
