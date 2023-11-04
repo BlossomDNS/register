@@ -12,7 +12,7 @@ from concurrency import *
 database = dataSQL(dbfile="database.db")
 
 app = Flask(__name__)
-app.secret_key = "somesecretkeythatonlyishouldknow"
+app.secret_key = SECRET_KEY
 app.config["GITHUB_CLIENT_ID"] = CLIENT_ID
 app.config["GITHUB_CLIENT_SECRET"] = CLIENT_SECRET
 #GITHUB = GitHub(app)
