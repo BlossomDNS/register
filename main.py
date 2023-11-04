@@ -178,6 +178,16 @@ def dashboard(response: str = ""):
         return redirect("login")
     domains_thread = ThreadWithReturnValue(target=database.subdomains_from_token, args=(session["id"],))
     domains_thread.start()
+    all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE))
+    all_sub_domains_thread.start()
+    target = session["id"]
+    
+    user_info_thread = ThreadWithReturnValue(target=requests.get,
+        kwargs={'url': f"https://api.github.com/user/{target}", "headers": {'Authorization': 'token ' + GITHUB_TOKEN}}
+        
+        
+    )
+    user_info_thread.start()
     
     args = request.args.to_dict()
     if "delete" in args and args["delete"] is not None:
@@ -202,15 +212,9 @@ def dashboard(response: str = ""):
         return redirect("dashboard")
 
 
-    all_sub_domains_thread = ThreadWithReturnValue(target=cloudf_doms, args=(CLOUDFLARE_DOMAINS, CLOUDFLARE))
-    all_sub_domains_thread.start()
-    target = session["id"]
-    
-    user_info = requests.get(
-        f"https://api.github.com/user/{target}",
-        headers = {'Authorization': 'token ' + GITHUB_TOKEN}
-    ).json()
 
+
+    user_info = user_info_thread.join().json()
     user_profile_picture = user_info["avatar_url"]
     user_company = user_info["company"]
 
