@@ -81,7 +81,7 @@ def claim(error: str = ""):
     target = session["id"]
     domains_thread = ThreadWithReturnValue(target=database.subdomains_from_token, args = (target,))
     domains_thread.start()
-    max_domains_thread = ThreadWithReturnValue(target=database.get_from_token("max", target,))
+    max_domains_thread = ThreadWithReturnValue(target=dataSQL(dbfile="database.db").get_from_token("max", target,))
     max_domains_thread.start()
 
 
