@@ -102,7 +102,7 @@ def claim(error: str = ""):
         max_domains = max_domains_thread.join()
         domains = domains_thread.join()
         if max_domains <= len(domains):
-            return render_template("claim.html", error="You already have the maximum number of domains.")
+            return render_template("claim.html", error="You already have the maximum number of domains.",domains=DOMAINS)
 
         
         subdomain = f"{INPUT}.{DOMAIN}"
