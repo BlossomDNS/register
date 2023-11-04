@@ -112,13 +112,15 @@ class Cloudflare:
                 return domain
                  
     def execute(self, dns_record_data):  # for post
+        yes = Thread(target=cache_instance.get_subdomains, args=(True,))
+        yes.start()
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
         response = self.session.post(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
         from cache import cache_instance
-        Thread(target=cache_instance.get_subdomains, args=(True,)).start()
-        
+
+        yes.join()
         return response
 
     def put(self, id, dns_record_data):
