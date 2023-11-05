@@ -34,8 +34,11 @@ body {
 
 .navbar-nav {
     justify-content: center;
+    text-align: center;
     margin-left: 0;
     gap: 10px;
+    padding: 10px;
+    margin-left: 510px;
 }
 
 .nav-link {
@@ -67,5 +70,9 @@ body {
 @media (max-width: 768px) {
     .navbar-nav {
         justify-content: space-around;
+        text-align: center;
+        margin-left: 0;
+        gap: 10px;
+        padding: 10px;
     }
 }
