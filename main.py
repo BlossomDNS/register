@@ -209,18 +209,13 @@ def dashboard(response: str = ""):
             return redirect("dashboard")
         DOMAIN = insert[1] + "." + insert[2]
 
-
-        domains = domains_thread.join()
-        if (INPUT in domains) == False: #if user doesn't own domain, return them back
+        if (INPUT in domains_thread.join()) == False: #if user doesn't own domain, return them back
             return redirect("dashboard")
 
 
         if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
             database.delete(subdomain=INPUT)
-            target = session["id"]
             send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **deleted** the domain: ``{INPUT}``.")
-
-        return redirect("dashboard")
 
 
 
