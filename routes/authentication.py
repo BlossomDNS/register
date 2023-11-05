@@ -2,7 +2,6 @@ from flask import Blueprint, current_app, url_for, session, redirect, make_respo
 from authlib.integrations.flask_client import OAuth
 from authlib.common.errors import AuthlibBaseError
 from config import *
-import sqlite3
 from main import database
 from discord import *
 from concurrency import *
