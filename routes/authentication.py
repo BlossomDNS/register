@@ -43,7 +43,7 @@ def authorize():
         session["id"] =  str(profile["id"])
         session["username"] = str(profile["login"])
         target = session["id"]
-        send_discord_message(f"ACCT LOGGED WITH SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}``")
+        Thread(target=send_discord_message, args=(f"ACCT LOGGED WITH SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}``",)).start()
         return redirect("dashboard")
 
     db_thread = Thread(target=dataSQL(dbfile="database.db").use_database, args=(
@@ -61,6 +61,6 @@ def authorize():
     session["id"] =  str(profile["id"])
     session["username"] = str(profile["login"])
     target = session["id"]
-    Thread(target=send_discord_message, args=(f":green_heart: :green_heart: :green_heart: NEW ACCT CREATED! SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}``"),).start()
+    Thread(target=send_discord_message, args=(f":green_heart: :green_heart: :green_heart: NEW ACCT CREATED! SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}``",)).start()
     db_thread.join()
-    redirect("dashboard")
+    return redirect("dashboard")
