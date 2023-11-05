@@ -23,8 +23,18 @@ class ThreadWithReturnValue(Thread):
 
 def cloudf_doms(CLOUDFLARE_DOMAINS, CLOUDFLARE) -> list:
     all_sub_domains = []
+    records_threads = {}
+    i=0
     for all_domain in CLOUDFLARE_DOMAINS:
-        records = CLOUDFLARE[all_domain["url"]].getDNSrecords()
+        
+        records_threads[i] = ThreadWithReturnValue(target = CLOUDFLARE[all_domain["url"]].getDNSrecords)
+        records_threads[i].start()
+        i+= 1
+    
+    for i in range(len(records_threads)):
+        records = records_threads[i].join()
         for record in records:
             all_sub_domains.append(record)
+        
+        
     return all_sub_domains
