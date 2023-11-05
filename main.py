@@ -118,7 +118,7 @@ def claim(error: str = ""):
 
         if response.status_code != 200:
             Thread(target=send_discord_message, args = (response.text,)).start()
-            return render_template("claim.html", error=response.json()['errors'][0]['error_chain'][0]['message'], domains=DOMAINS)
+            return render_template("claim.html", error="Domain already exist on Cloudflare.", domains=DOMAINS)
 
         database.new_subdomain(token=session["id"], subdomain=subdomain)
         t = ThreadWithReturnValue(target=cache_instance.get_subdomains, args=(False,))
