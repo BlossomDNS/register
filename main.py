@@ -209,9 +209,7 @@ def dashboard(response: str = ""):
             return redirect("dashboard")
         DOMAIN = insert[1] + "." + insert[2]
 
-
-        domains = domains_thread.join()
-        if (INPUT in domains) == False: #if user doesn't own domain, return them back
+        if (INPUT in domains_thread.join()) == False: #if user doesn't own domain, return them back
             return redirect("dashboard")
 
 
