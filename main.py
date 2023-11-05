@@ -216,7 +216,7 @@ def dashboard(response: str = ""):
         if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
             database.delete(subdomain=INPUT)
             send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **deleted** the domain: ``{INPUT}``.")
-
+        return redirect("dashboard")
 
 
 
@@ -245,7 +245,7 @@ def dashboard(response: str = ""):
             if possible_domain["name"] in domains
         ]
     except Exception as e:
-        print(e)
+        print("ERROR ------------------------------\n"+e)
         user_subdomains = []
 
     return render_template(
