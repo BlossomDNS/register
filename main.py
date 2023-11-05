@@ -122,6 +122,7 @@ def claim(error: str = ""):
             return render_template("claim.html", error=response.json()['errors'][0]['error_chain'][0]['message'], domains=DOMAINS)
 
         database.new_subdomain(token=session["id"], subdomain=subdomain)
+        #_ = ThreadWithReturnValue(target=cache_instance.get_subdomains, args=(True,)).start()
 
         Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{subdomain}``",)).start()
 
@@ -189,7 +190,7 @@ def dashboard(response: str = ""):
         return redirect("login")
     domains_thread = ThreadWithReturnValue(target=database.subdomains_from_token, args=(session["id"],))
     domains_thread.start()
-    all_sub_domains_thread = ThreadWithReturnValue(target=cache_instance.get_subdomains)
+    all_sub_domains_thread = ThreadWithReturnValue(target=cache_instance.get_subdomains,  args=(True,))
     all_sub_domains_thread.start()
     target = session["id"]
     
