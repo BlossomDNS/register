@@ -11,7 +11,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container py-4">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" id="navbar-toggler">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -37,5 +37,12 @@
             <p>Always wanted a FREE subdomain? You came to the right place.</p>
         </div>
     </div>
+
+    <script>
+        document.getElementById('navbar-toggler').addEventListener('click', function () {
+            var navbarNav = document.querySelector('.navbar-collapse');
+            navbarNav.classList.toggle('show');
+        });
+    </script>
 </body>
 </html>
