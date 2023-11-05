@@ -1,9 +1,7 @@
-import sys
 import requests
 from flask import Flask, flash, g, redirect, render_template, request, session, url_for
 from admins import *
 from cache import Cache
-from github import *
 from cloudflare import *
 from routes.authentication import *
 from data_sql import *
@@ -19,7 +17,7 @@ app.config["GITHUB_CLIENT_ID"] = CLIENT_ID
 app.config["GITHUB_CLIENT_SECRET"] = CLIENT_SECRET
 #Cloudflare
 CACHE_INSTANCE = Cache()
-CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, account_id=CLOUDFLARE_ACCOUNT_ID, zone_id=domain["cloudflare_zone_id"], cache=CACHE_INSTANCE) for domain in CLOUDFLARE_DOMAINS}
+CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, zone_id=domain["cloudflare_zone_id"], cache=CACHE_INSTANCE) for domain in CLOUDFLARE_DOMAINS}
 CACHE_INSTANCE.setCloudflare(CLOUDFLARE)
 DOMAINS = set(CLOUDFLARE)
 

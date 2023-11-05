@@ -16,9 +16,8 @@ from threading import Thread
 
 
 class Cloudflare:
-    def __init__(self, api_token, account_id, zone_id, cache):
+    def __init__(self, api_token, zone_id, cache):
         self.API_TOKEN = api_token
-        self.ACCOUNT_ID = account_id
         self.ZONE_ID = zone_id
         self.session = requests.Session()
         self.cache = cache
