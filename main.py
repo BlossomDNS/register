@@ -217,10 +217,7 @@ def dashboard(response: str = ""):
 
         if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
             database.delete(subdomain=INPUT)
-            target = session["id"]
             send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **deleted** the domain: ``{INPUT}``.")
-
-        return redirect("dashboard")
 
 
 
