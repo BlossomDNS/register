@@ -127,6 +127,10 @@ class Cloudflare:
         response = self.session.put(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
+        yes = Thread(target=self.cache.get_subdomains, args=(True,))
+        yes.start()
+
+        yes.join()
         return response
 
 
