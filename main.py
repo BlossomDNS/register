@@ -1,3 +1,4 @@
+import sys
 import requests
 from flask import Flask, flash, g, redirect, render_template, request, session, url_for
 from flask_github import GitHub
@@ -310,6 +311,11 @@ def loginadmin():
         
     return render_template("login.html")
 
+@app.errorhandler(Exception)
+def handle_error(error):
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    error_message = f"An error occurred: {exc_type} - {exc_value}"
+    return render_template("error.html",error=error_message)
 
 if __name__ == "__main__":
     # from waitress import serve
