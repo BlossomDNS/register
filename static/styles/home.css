@@ -4,18 +4,26 @@ body {
     align-items: center;
     height: 100vh;
     background-image: url("https://getwallpapers.com/wallpaper/full/f/9/d/508720.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
+
 .jumbotron {
     text-align: center;
     color: whitesmoke;
     font-weight: 300;
+    padding: 20px;
 }
+
 .jumbotron hr {
-    border-bottom: none;
-    width: 500px;
-    margin: 0 auto;
+    border: none;
+    border-top: 1px solid whitesmoke;
+    width: 80%;
+    margin: 20px auto;
     opacity: 0.9;
 }
+
 .navbar {
     background-color: transparent !important;
     text-align: center;
@@ -23,21 +31,28 @@ body {
     width: 100%;
     top: 0;
 }
+
 .navbar-nav {
     justify-content: center;
-    margin-left:530px;
+    margin-left: 0;
     gap: 10px;
 }
+
 .nav-link {
     color: white !important;
     position: relative;
     transition: all 0.3s ease-in-out;
+    padding: 10px 15px;
+    text-align: center;
+    display: block;
 }
+
 .nav-link::after {
     content: '';
     position: absolute;
-    bottom: -2px;
-    left: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 0;
     height: 2px;
     background-color: white;
@@ -47,4 +62,10 @@ body {
 .nav-link:hover::after,
 .nav-link:focus::after {
     width: 100%;
+}
+
+@media (max-width: 768px) {
+    .navbar-nav {
+        justify-content: space-around;
+    }
 }
