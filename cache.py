@@ -14,6 +14,8 @@ class Cache():
             all_domains = cloudf_doms(CLOUDFLARE_DOMAINS, CLOUDFLARE)
             self.all_sub_domains = all_domains
             
+        print(self.all_sub_domains)
+            
         return self.all_sub_domains
     
     def add_subdomain(self, subdomain):
