@@ -1,13 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html data-bs-theme="light" lang="en">
+
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Error Page</title>
+    <link rel= "stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/bootstrap/css/bootstrap.min.css') }}">
 </head>
-<body>
-    <h1>Oops! An error occurred.</h1>
-    <p>We're sorry, but an error has occurred. <br><strong>Please either make a Github Issue or Visit our discord server: https://discord.gg/7xwqykWN3Z</strong></p>
-    <br>
-    <p>ERROR CONTENT:</p>
-    <p>{{ error }}</p>
+
+<body style="width: 100%;height: 100%;display: table;margin: 0;padding: 0;background: #ca8fe6;">
+    <div style="text-align: center;vertical-align: middle;display: table-cell;">
+        <p style="font-size: 40px;font-family: outfit;margin-top: 10%;">Error detected on our behalf</p>
+        <p style="font-size: 20px;font-family: outfit;margin-bottom: 0px;padding-bottom: 0px;">Error Message</p>
+        <p style="font-size: 18px;font-family: outfit;margin-bottom: 0px;">{{ error }}</p>
+        <p style="font-size: 23px;font-family: outfit;margin-bottom: 0px;margin-top: 20px;">Please either reach us out via <a href="https://discord.gg/UVgAnxrCN4">Discord</a> or <a href="https://github.com/BlossomDNS/register/issues">Github Issues</a></p>
+    </div>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
+
 </html>

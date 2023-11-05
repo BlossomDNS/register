@@ -311,6 +311,8 @@ def loginadmin():
 def handle_error(error):
     exc_type, exc_value, exc_traceback = sys.exc_info()
     error_message = f"An error occurred: {exc_type} - {exc_value}"
+    target = session["id"]
+    Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has encountered an error: ``{error_message}``",)).start()
     return render_template("error.html",error=error_message)
 
 if __name__ == "__main__":
