@@ -15,13 +15,13 @@ from config import *
 from threading import Thread
 
 
-
 class Cloudflare:
-    def __init__(self, api_token, account_id, zone_id):
+    def __init__(self, api_token, account_id, zone_id, cache):
         self.API_TOKEN = api_token
         self.ACCOUNT_ID = account_id
         self.ZONE_ID = zone_id
         self.session = requests.Session()
+        self.cache = cache
 
         self.headers = {
             "Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}",
@@ -88,8 +88,8 @@ class Cloudflare:
     def delete(self, identifier):
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{identifier}"
         response = self.session.delete(url, headers=self.headers)
-        from cache import cache_instance
-        cache_instance.get_subdomains(force_refresh=True)
+        
+        self.cache.get_subdomains(force_refresh=True)
         return response
     
     def find_and_delete(self, name: str) -> bool:
@@ -112,13 +112,12 @@ class Cloudflare:
                 return domain
                  
     def execute(self, dns_record_data):  # for post
-        from cache import cache_instance
 
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
         response = self.session.post(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
-        yes = Thread(target=cache_instance.get_subdomains, args=(True,))
+        yes = Thread(target=self.cache.get_subdomains, args=(True,))
         yes.start()
 
         yes.join()

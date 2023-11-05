@@ -1,46 +1,37 @@
 import sys
 import requests
 from flask import Flask, flash, g, redirect, render_template, request, session, url_for
-from flask_github import GitHub
 from admins import *
+from cache import Cache
 from github import *
 from cloudflare import *
 from routes.authentication import *
 from data_sql import *
 from discord import get_github_username, send_discord_message
 from concurrency import *
-from cache import cache_instance
 
+#Sql Wrapper
 database = dataSQL(dbfile="database.db")
-
+#Flask App
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 app.config["GITHUB_CLIENT_ID"] = CLIENT_ID
 app.config["GITHUB_CLIENT_SECRET"] = CLIENT_SECRET
-#GITHUB = GitHub(app)
-
-CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, account_id=CLOUDFLARE_ACCOUNT_ID, zone_id=domain["cloudflare_zone_id"]) for domain in CLOUDFLARE_DOMAINS}
-
-
+#Cloudflare
+CACHE_INSTANCE = Cache()
+CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, account_id=CLOUDFLARE_ACCOUNT_ID, zone_id=domain["cloudflare_zone_id"], cache=CACHE_INSTANCE) for domain in CLOUDFLARE_DOMAINS}
+CACHE_INSTANCE.setCloudflare(CLOUDFLARE)
 DOMAINS = set(CLOUDFLARE)
 
 
-@app.after_request
-def after_request_func(response):
-    if session.get("id") != None:
-        try:
-            target = session.get("id")
-            if request.path.count('/') == 1:
-                send_discord_message(f"Session ``{target}`` as ``{get_github_username(github_id=target)}`` accessed the subdirectory ``{request.path}``")
-        except:
-            ...
-        
-    return response
-
+#USER SIDE
+#===============================
+#/
 @app.route("/")
 def indexnormal():
     return render_template("home.html")
 
+#/edit
 @app.route("/edit", methods=["GET","POST"])
 def edit(error=""):
     if "id" not in session:
@@ -77,6 +68,7 @@ def edit(error=""):
     
     return render_template("edit.html", domain=DOM, error=error)
 
+#/claim
 @app.route("/claim", methods=["GET", "POST"])
 def claim(error: str = ""):
     if "id" not in session:
@@ -121,7 +113,7 @@ def claim(error: str = ""):
             return render_template("claim.html", error="Domain already exist on Cloudflare.", domains=DOMAINS)
 
         database.new_subdomain(token=session["id"], subdomain=subdomain)
-        t = ThreadWithReturnValue(target=cache_instance.get_subdomains, args=(False,))
+        t = ThreadWithReturnValue(target=CACHE_INSTANCE.get_subdomains, args=(False,))
         t.start()
         Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{subdomain}``",)).start()
         t.join()
@@ -131,65 +123,14 @@ def claim(error: str = ""):
     else:
         return render_template("claim.html", error=error, domains=DOMAINS)
 
-
-@app.before_request
-def before_request():
-    g.user = None
-    if "user_id" in session:
-        user = [x for x in ADMIN_ACCTS if x.id == session["user_id"]][0]
-        g.user = user
-    
-
-
-
-@app.route("/admin", methods=["GET", "POST"])  # admin site soon
-def admin():
-    if not g.user:
-        return redirect(url_for("adminlogin"))
-    subdomains = []
-
-    for domain in CLOUDFLARE_DOMAINS:
-        yes = CLOUDFLARE[domain["url"]].getDNSrecords()
-        for ye in yes:
-            subdomains.append(
-                {
-                    "name": ye["name"],
-                    "type": ye["type"],
-                    "content": ye["content"],
-                    "id": ye["id"],
-                    "proxied": ye["proxied"],
-                }
-            )
-    
-    args = request.args.to_dict()
-    if "delete" in args and args["delete"] is not None:
-
-        INPUT = args["delete"]
-        print(INPUT)
-        insert = INPUT.split(".")
-        DOMAIN = insert[1] + "." + insert[2]
-
-        if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
-            database.delete(subdomain=INPUT)
-        
-        target = session["admin_email"]
-        send_discord_message(f":safety_vest: ADMIN ``{target}`` has deleted the domain ``{INPUT}``. :safety_vest: ")
-        
-        return redirect("admin")
-
-
-    return render_template(
-        "admin.html", subdomains=subdomains, account_id=CLOUDFLARE_ACCOUNT_ID
-    )
-
-
+#/dashboard
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard(response: str = ""):
     if "id" not in session:
         return redirect("login")
     domains_thread = ThreadWithReturnValue(target=database.subdomains_from_token, args=(session["id"],))
     domains_thread.start()
-    all_sub_domains_thread = ThreadWithReturnValue(target=cache_instance.get_subdomains)
+    all_sub_domains_thread = ThreadWithReturnValue(target=CACHE_INSTANCE.get_subdomains)
     all_sub_domains_thread.start()
     target = session["id"]
     
@@ -257,32 +198,9 @@ def dashboard(response: str = ""):
         response=response
     )
 
-
-#@app.route("/control", methods=["GET", "POST"])  # admin site soon
-#def control(output: str = "N/A"):
-#    if not g.user:
-#        return redirect(url_for("login"))
-#
-#    if request.method == "POST":
-#        data = {}
-#        data["dns_record"] = request.form["dns_record"]
-#        data["type"] = request.form.get("type")
-#        data["url"] = request.form.get("url")
-#        data["dns_content"] = request.form.get("dns_content")
-#        if data["type"].lower() == "a":
-#            CLOUDFLARE[data["url"]].insert_A_record(
-#                data["dns_record"], data["dns_content"], PROXIED=False
-#            )
-#        elif data["type"].lower() == "cname":
-#            CLOUDFLARE[data["url"]].insert_CNAME_record(
-#                data["dns_record"], data["dns_content"], PROXIED=False
-#            )
-#        else:
-#            return "wrong type"
-#
-#    return render_template("control.html", output=output, urls=CLOUDFLARE_DOMAINS)
-
-
+#ADMIN CODE
+#===============================
+#/loginadmin
 @app.route("/loginadmin", methods=["GET", "POST"])
 def loginadmin():
     if request.method == "POST":
@@ -306,16 +224,101 @@ def loginadmin():
         
     return render_template("login.html")
 
-@app.errorhandler(Exception)
-def handle_error(error):
-    exc_type, exc_value, exc_traceback = sys.exc_info()
-    error_message = f"An error occurred: {exc_type} - {exc_value}"
-    target = session["id"]
-    Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has encountered an error: ``{error_message}``",)).start()
-    return render_template("error.html",error=error_message)
+
+#/admin
+@app.route("/admin", methods=["GET", "POST"])  # admin site soon
+def admin():
+    if not g.user:
+        return redirect(url_for("adminlogin"))
+    subdomains = []
+
+    for domain in CLOUDFLARE_DOMAINS:
+        yes = CLOUDFLARE[domain["url"]].getDNSrecords()
+        for ye in yes:
+            subdomains.append(
+                {
+                    "name": ye["name"],
+                    "type": ye["type"],
+                    "content": ye["content"],
+                    "id": ye["id"],
+                    "proxied": ye["proxied"],
+                }
+            )
+    
+    args = request.args.to_dict()
+    if "delete" in args and args["delete"] is not None:
+
+        INPUT = args["delete"]
+        print(INPUT)
+        insert = INPUT.split(".")
+        DOMAIN = insert[1] + "." + insert[2]
+
+        if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
+            database.delete(subdomain=INPUT)
+        
+        target = session["admin_email"]
+        send_discord_message(f":safety_vest: ADMIN ``{target}`` has deleted the domain ``{INPUT}``. :safety_vest: ")
+        
+        return redirect("admin")
+
+
+    return render_template(
+        "admin.html", subdomains=subdomains, account_id=CLOUDFLARE_ACCOUNT_ID
+    )
+
+#Before a Website is Accessed
+#BEFORE_REQUEST
+#Only /admin and /loginadmin really uses this
+#======================================
+@app.before_request
+def before_request():
+    g.user = None
+    if "user_id" in session:
+        user = [x for x in ADMIN_ACCTS if x.id == session["user_id"]][0]
+        g.user = user
+    
+
+#After A Website is Accessed
+#AFTER_REQUEST
+#=======================================
+@app.after_request
+def after_request_func(response):
+    if session.get("id") != None:
+        try:
+            target = session.get("id")
+            if request.path.count('/') == 1:
+                send_discord_message(f"Session ``{target}`` as ``{get_github_username(github_id=target)}`` accessed the subdirectory ``{request.path}``")
+        except:
+            ...
+        
+    return response
+
+# ERROR HANDLING
+# Goes to another website and prints issue
+#=======================================
+#@app.errorhandler(Exception)
+#def handle_error(error):
+#    exc_type, exc_value, exc_traceback = sys.exc_info()
+#    error_message = f"An error occurred: {exc_type} - {exc_value}"
+#    target = session["id"]
+#    Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has encountered an error: ``{error_message}``",)).start()
+#    return render_template("error.html",error=error_message)
+
+
+#STARTUP
+#Sets up Cache ahead of time
+def startup():
+    t = Thread(target=CACHE_INSTANCE.get_subdomains, args=(False,))
+    t.start()
+    print("SERVER STARTED...")
+    Thread(target=send_discord_message, args = (f"SERVER STARTING...",)).start()
+    t.join()
+    print("Cache is up to date!")
+    
 
 if __name__ == "__main__":
     # from waitress import serve
     # serve(app, host="0.0.0.0", port=8080)
+    startup()
     app.register_blueprint(authentication)
-    app.run(host="0.0.0.0", port=PORT, debug=False, threaded=True)
+    app.run(host="0.0.0.0", port=PORT, debug=True, threaded=True)
