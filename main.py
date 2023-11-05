@@ -311,9 +311,10 @@ def startup():
     t = Thread(target=CACHE_INSTANCE.get_subdomains, args=(False,))
     t.start()
     print("SERVER STARTED...")
-    Thread(target=send_discord_message, args = (f"SERVER STARTING...",)).start()
+    send_discord_message("SERVER STARTING!")
     t.join()
     print("Cache is up to date!")
+    send_discord_message("Cache up to date.")
     
 
 if __name__ == "__main__":
