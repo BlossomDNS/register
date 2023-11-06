@@ -83,8 +83,6 @@ In the dynamic landscape of modern digital infrastructure, effective and streaml
 
 Our mission at BlossomDNS is to revolutionize the way you handle your DNS and subdomain records, offering a professional and innovative approach that ensures smooth, efficient, and organized management. With BlossomDNS, you'll experience a heightened level of control over your online presence, allowing you to focus on what truly matters—your core business operations.
 
-Use the `BLANK_README.md` to get started.
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
