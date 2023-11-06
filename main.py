@@ -283,7 +283,7 @@ def after_request_func(response):
             if request.path.count('/') == 1:
                 send_discord_message(f"Session ``{target}`` as ``{get_github_username(github_id=target)}`` accessed the subdirectory ``{request.path}``")
         except:
-            ...
+            pass
         
     return response
 
