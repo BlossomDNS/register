@@ -13,6 +13,12 @@ My java professor is cool
 
 class dataSQL:
     def __init__(self, dbfile):
+        """
+        Initialize a DatabaseManager with the specified SQLite database file.
+
+        Parameters:
+        - dbfile (str): The path to the SQLite database file.
+        """
         self.dbfile = dbfile
         self.connection = sqlite3.connect(self.dbfile)
         self.cursor = self.connection.cursor()
@@ -27,13 +33,32 @@ class dataSQL:
         self.connection.close()
 
     def connect(self) -> sqlite3.Connection:
+        """
+        Establish a connection to the SQLite database.
+
+        Returns:
+        - sqlite3.Connection: A database connection object.
+        """
         return sqlite3.connect(self.dbfile)
 
     def close(self):
+        """
+        Commit any pending changes and close the database connection.
+        """
         self.connection.commit()
         self.connection.close()
 
     def use_database(self, query: str, values: tuple = None):
+        """
+        Execute a database query and return the result.
+
+        Parameters:
+        - query (str): The SQL query to execute.
+        - values (tuple, optional): A tuple of parameter values to bind to the query.
+
+        Returns:
+        - result: The result of the query execution. If it's a SELECT query, it returns the first row as a tuple; otherwise, it returns None.
+        """
         self.connection = self.connect()
 
         res = self.connection.execute(query, values)
@@ -45,12 +70,13 @@ class dataSQL:
 
     def subdomains_from_token(self, session):
         """
-        args:
-            session -> user's session (session[id])
+        Retrieve a list of subdomains owned by a user with a specific session token.
 
-        output:
-            if NONE then []
-            otherwise get a list of subdomains owned by x user
+        Parameters:
+        - session: User's session token.
+
+        Returns:
+        - domain_list: A list of subdomains owned by the user or an empty list if none are found.
         """
         self.connection = self.connect()
         self.cursor = self.connection.cursor()
@@ -70,12 +96,32 @@ class dataSQL:
         return domain_list
 
     def get_from_token(self, need, session):
+        """
+        Retrieve a specific field (e.g., user information) from the 'users' table based on a session token.
+
+        Parameters:
+        - need (str): The field to retrieve (e.g., 'username', 'email').
+        - session: User's session token.
+
+        Returns:
+        - value: The value of the requested field or None if not found.
+        """
         out = self.use_database(
             f"SELECT {need} from users where token = ?", (session,)
         )
         return out[0]
     
     def new_subdomain(self, token, subdomain) -> bool: #inserts new_subdomain
+        """
+        Insert a new subdomain for a user.
+
+        Parameters:
+        - token: User's session token.
+        - subdomain: The subdomain to be inserted.
+
+        Returns:
+        - success: True if the insertion is successful, False otherwise.
+        """
         if self.token_exists(token=token): #check if there is a user in the first place
             self.connection = self.connect()
             self.connection.execute("INSERT INTO subdomains (token, subdomain) VALUES (?, ?)", (token, subdomain))
@@ -86,6 +132,15 @@ class dataSQL:
         
     
     def token_exists(self, token) -> bool:
+        """
+        Check if a user with the specified session token exists in the 'users' table.
+
+        Parameters:
+        - token: User's session token to check.
+
+        Returns:
+        - exists: True if the user exists, False otherwise.
+        """
         self.connection = self.connect()
         self.cursor = self.connection.cursor()
         
@@ -103,6 +158,15 @@ class dataSQL:
             return False
     
     def delete(self, subdomain) -> bool:
+        """
+        Delete a subdomain from the 'subdomains' table.
+
+        Parameters:
+        - subdomain: The subdomain to be deleted.
+
+        Returns:
+        - success: True if the deletion is successful, False otherwise.
+        """
         try:
             self.connection = self.connect()
             self.cursor = self.connection.cursor()
@@ -115,6 +179,15 @@ class dataSQL:
             return False
     
     def owner_of_subdmain(self, subdomain) -> int:
+        """
+        Retrieve the session token (owner) of a specific subdomain.
+
+        Parameters:
+        - subdomain: The subdomain to query ownership for.
+
+        Returns:
+        - owner_token: The session token (as an integer) of the owner of the subdomain.
+        """
         self.connection = self.connect()
         self.cursor = self.connection.cursor()
         self.cursor.execute(f'SELECT Token FROM subdomains WHERE subdomain = "{subdomain}";')
