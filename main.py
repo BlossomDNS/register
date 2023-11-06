@@ -15,8 +15,7 @@ app = Flask(__name__)
 app.secret_key = SECRET_KEY
 app.config["GITHUB_CLIENT_ID"] = CLIENT_ID
 app.config["GITHUB_CLIENT_SECRET"] = CLIENT_SECRET
-#Cloudflare
-DOMAINS = set(CLOUDFLARE)
+#Cloudflare global variables are in cloudflare.py since a lot of .py files uses them
 
 
 #USER SIDE
