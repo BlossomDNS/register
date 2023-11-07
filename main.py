@@ -226,8 +226,8 @@ def admin():
         return redirect(url_for("adminlogin"))
     subdomains = []
 
-    for domain in CLOUDFLARE_DOMAINS:
-        yes = CLOUDFLARE[domain["url"]].getDNSrecords()
+    for domain in DOMAINS:
+        yes = CLOUDFLARE[domain].getDNSrecords()
         for ye in yes:
             subdomains.append(
                 {
@@ -252,8 +252,6 @@ def admin():
         
         target = session["admin_email"]
         send_discord_message(f":safety_vest: ADMIN ``{target}`` has deleted the domain ``{INPUT}``. :safety_vest: ")
-        
-        return redirect("admin")
 
 
     return render_template(
