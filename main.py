@@ -231,6 +231,10 @@ def admin():
     
     subdomains = ThreadWithReturnValue(target=cloudf_doms, args = (DOMAINS,CLOUDFLARE,))
     subdomains.start()
+
+    owners = database.admin_fetchall()
+    print(owners)
+
     #subdomains = cloudf_doms(DOMAINS=DOMAINS, CLOUDFLARE=CLOUDFLARE)
 
     #for domain in DOMAINS:
@@ -260,9 +264,10 @@ def admin():
         target = session["admin_email"]
         send_discord_message(f":safety_vest: ADMIN ``{target}`` has deleted the domain ``{INPUT}``. :safety_vest: ")
 
+    x = subdomains.join()
 
     return render_template(
-        "admin.html", subdomains=subdomains.join(), account_id=CLOUDFLARE_ACCOUNT_ID
+        "admin.html", subdomains=x, len_sd = len(x), account_id=CLOUDFLARE_ACCOUNT_ID, owners=owners, len_owners=len(owners)
     )
 
 #Before a Website is Accessed

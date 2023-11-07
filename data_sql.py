@@ -195,3 +195,27 @@ class dataSQL:
         self.cursor.close()
         self.close()
         return token
+    
+    def admin_fetchall(self) -> list:
+        output = []
+        self.connection = self.connect()
+        self.cursor = self.connection.cursor()
+        self.cursor.execute(f'SELECT * FROM subdomains;')
+        subdomains = self.cursor.fetchall()
+
+        for subdomain in subdomains:
+            user = self.cursor.execute(f'SELECT username FROM users WHERE token = {subdomain[0]};').fetchone()[0]
+            output.append(SQLRelationship(owner=user, subdomain=subdomain[1]))
+
+        self.cursor.close()
+        self.close()
+        
+        return subdomains
+
+class SQLRelationship:
+    def __init__(self, owner, subdomain):
+        self.owner = owner
+        self.subdomain = subdomain
+
+
+print(dataSQL("database.db").admin_fetchall())
