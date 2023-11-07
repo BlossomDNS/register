@@ -233,22 +233,7 @@ def admin():
     subdomains.start()
 
     owners = database.admin_fetchall()
-    print(owners)
 
-    #subdomains = cloudf_doms(DOMAINS=DOMAINS, CLOUDFLARE=CLOUDFLARE)
-
-    #for domain in DOMAINS:
-    #    yes = CLOUDFLARE[domain].getDNSrecords()
-    #    for ye in yes:
-    #        subdomains.append(
-    #            {
-    #                "name": ye["name"],
-    #                "type": ye["type"],
-    #                "content": ye["content"],
-    #                "id": ye["id"],
-    #                "proxied": ye["proxied"],
-    #            }
-    #        )
     
     args = request.args.to_dict()
     if "delete" in args and args["delete"] is not None:
@@ -263,6 +248,15 @@ def admin():
         
         target = session["admin_email"]
         send_discord_message(f":safety_vest: ADMIN ``{target}`` has deleted the domain ``{INPUT}``. :safety_vest: ")
+        subdomains = ThreadWithReturnValue(target=cloudf_doms, args = (DOMAINS,CLOUDFLARE,))
+        subdomains.start()
+    
+    elif "disassociate" in args and args["disassociate"] is not None:
+        DOMAIN_TO_REMOVE = args["disassociate"]
+        database.delete(subdomain=DOMAIN_TO_REMOVE)
+        target = session["admin_email"]
+        send_discord_message(f":safety_vest: ADMIN ``{target}`` has modified the SQL; Disassociated the domain ``{DOMAIN_TO_REMOVE}``. :safety_vest: ")
+        owners = database.admin_fetchall()
 
     x = subdomains.join()
 
