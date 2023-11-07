@@ -107,7 +107,7 @@ def claim(error: str = ""):
             return render_template("claim.html", error="Domain already exist on Cloudflare.", domains=DOMAINS)
 
         database.new_subdomain(token=session["id"], subdomain=subdomain)
-        t = ThreadWithReturnValue(target=CACHE_INSTANCE.get_subdomains, args=(False,))
+        t = ThreadWithReturnValue(target=CACHE_INSTANCE.get_subdomains, args=(True,))
         t.start()
         Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{subdomain}``",)).start()
         t.join()
@@ -151,7 +151,10 @@ def dashboard(response: str = ""):
         if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
             database.delete(subdomain=INPUT)
             send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **deleted** the domain: ``{INPUT}``.")
-        return redirect("dashboard")
+        domains_thread = ThreadWithReturnValue(target=CACHE_INSTANCE.get_subdomains, args=(True,))
+        domains_thread.start()
+        Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{INPUT}``",)).start()
+        #return redirect("dashboard")
 
 
 
