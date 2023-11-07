@@ -33,7 +33,6 @@ def edit(error=""):
     
     args = request.args.to_dict()
     INPUT = args["dom"]
-    print(database.subdomains_from_token(session=session["id"]))
     if INPUT not in database.subdomains_from_token(session=session["id"]):
         return redirect("dashboard")
     
@@ -45,7 +44,6 @@ def edit(error=""):
         return redirect("dashboard")
 
     if request.method == "POST":
-        print(request.form)
         NAME = request.form["name"]
         TYPE = request.form["type"]
         CONTENT = request.form["content"]
@@ -239,7 +237,6 @@ def admin():
     if "delete" in args and args["delete"] is not None:
 
         INPUT = args["delete"]
-        print(INPUT)
         insert = INPUT.split(".")
         DOMAIN = insert[1] + "." + insert[2]
 

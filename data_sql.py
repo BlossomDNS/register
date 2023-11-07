@@ -216,6 +216,3 @@ class SQLRelationship:
     def __init__(self, owner, subdomain):
         self.owner = owner
         self.subdomain = subdomain
-
-
-print(dataSQL("database.db").admin_fetchall())
