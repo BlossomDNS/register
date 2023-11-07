@@ -151,7 +151,8 @@ def dashboard(response: str = ""):
         if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
             database.delete(subdomain=INPUT)
             send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **deleted** the domain: ``{INPUT}``.")
-        domains_thread = ThreadWithReturnValue(target=CACHE_INSTANCE.get_subdomains, args=(True,))
+            domains_thread = ThreadWithReturnValue(target=CACHE_INSTANCE.get_subdomains, args=(True,))
+        
         domains_thread.start()
         Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{INPUT}``",)).start()
         #return redirect("dashboard")
@@ -227,20 +228,23 @@ def loginadmin():
 def admin():
     if not g.user:
         return redirect(url_for("adminlogin"))
-    subdomains = []
+    
+    subdomains = ThreadWithReturnValue(target=cloudf_doms, args = (DOMAINS,CLOUDFLARE,))
+    subdomains.start()
+    #subdomains = cloudf_doms(DOMAINS=DOMAINS, CLOUDFLARE=CLOUDFLARE)
 
-    for domain in DOMAINS:
-        yes = CLOUDFLARE[domain].getDNSrecords()
-        for ye in yes:
-            subdomains.append(
-                {
-                    "name": ye["name"],
-                    "type": ye["type"],
-                    "content": ye["content"],
-                    "id": ye["id"],
-                    "proxied": ye["proxied"],
-                }
-            )
+    #for domain in DOMAINS:
+    #    yes = CLOUDFLARE[domain].getDNSrecords()
+    #    for ye in yes:
+    #        subdomains.append(
+    #            {
+    #                "name": ye["name"],
+    #                "type": ye["type"],
+    #                "content": ye["content"],
+    #                "id": ye["id"],
+    #                "proxied": ye["proxied"],
+    #            }
+    #        )
     
     args = request.args.to_dict()
     if "delete" in args and args["delete"] is not None:
@@ -258,7 +262,7 @@ def admin():
 
 
     return render_template(
-        "admin.html", subdomains=subdomains, account_id=CLOUDFLARE_ACCOUNT_ID
+        "admin.html", subdomains=subdomains.join(), account_id=CLOUDFLARE_ACCOUNT_ID
     )
 
 #Before a Website is Accessed
