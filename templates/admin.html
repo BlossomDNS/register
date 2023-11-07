@@ -226,9 +226,9 @@
                                             <tbody>
                                                 {% for owner in owners %}
                                                 <tr>
-                                                    <td>{{owner[0]}}</td>
-                                                    <td>{{owner[1]}}</td>
-                                                    <td><a href="/admin?disassociate={{owner[1]}}">Click here</a></td>
+                                                    <td>{{owner.owner}}</td>
+                                                    <td>{{owner.subdomain}}</td>
+                                                    <td><a href="/admin?disassociate={{owner.subdomain}}">Click here</a></td>
                                                 </tr>
                                                 {%endfor%}
                                             </tbody>

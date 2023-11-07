@@ -209,8 +209,8 @@ class dataSQL:
 
         self.cursor.close()
         self.close()
-        
-        return subdomains
+
+        return output
 
 class SQLRelationship:
     def __init__(self, owner, subdomain):
