@@ -33,6 +33,7 @@
     DNS Management / Subdomain Records Done Easier
     <br />
     <a href="https://cool-web.site/"><strong>Website »</strong></a>
+    <a href="https://blossomdns.gitbook.io/blossomdns/"><strong>Documentation »</strong></a>  
     <br />
     <br />
     <div align="center">
