@@ -128,8 +128,6 @@ def dashboard(response: str = ""):
     
     user_info_thread = ThreadWithReturnValue(target=requests.get,
         kwargs={'url': f"https://api.github.com/user/{target}", "headers": {'Authorization': 'token ' + GITHUB_TOKEN}}
-        
-        
     )
     user_info_thread.start()
     
@@ -150,8 +148,8 @@ def dashboard(response: str = ""):
             database.delete(subdomain=INPUT)
             send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **deleted** the domain: ``{INPUT}``.")
             domains_thread = ThreadWithReturnValue(target=CACHE_INSTANCE.get_subdomains, args=(True,))
-        
-        domains_thread.start()
+            domains_thread.start()
+            
         Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{INPUT}``",)).start()
         #return redirect("dashboard")
 
