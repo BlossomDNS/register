@@ -316,4 +316,8 @@ if __name__ == "__main__":
     # serve(app, host="0.0.0.0", port=8080)
     startup()
     app.register_blueprint(authentication)
-    app.run(host="0.0.0.0", port=PORT, debug=False, threaded=True)
+    try:
+        from waitress import serve
+        serve(app, host="0.0.0.0", port=PORT)
+    except:
+        app.run(host="0.0.0.0", port=PORT, debug=False, threaded=True)
