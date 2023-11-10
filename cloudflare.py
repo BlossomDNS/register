@@ -306,8 +306,9 @@ class Cloudflare:
         return response
     
 CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, zone_id=domain["cloudflare_zone_id"]) for domain in CLOUDFLARE_DOMAINS}
-del CLOUDFLARE_DOMAINS
-del CLOUDFLARE_API_TOKEN
-
 CACHE_INSTANCE = Cache(CLOUDFLARE)
 DOMAINS = set(CLOUDFLARE)
+
+#Not needed anymore!
+del CLOUDFLARE_DOMAINS
+del CLOUDFLARE_API_TOKEN
