@@ -244,7 +244,10 @@ def admin():
         
         target = session["admin_email"]
         send_discord_message(f":safety_vest: ADMIN ``{target}`` has deleted the domain ``{INPUT}``. :safety_vest: ")
-        subdomains = ThreadWithReturnValue(target=cloudf_doms, args = (DOMAINS,CLOUDFLARE,))
+        
+        #re-run the code
+        subdomains.join()
+        subdomains = ThreadWithReturnValue(target=cloudf_doms, args = (DOMAINS,CLOUDFLARE,)) #re-run it
         subdomains.start()
     
     elif "disassociate" in args and args["disassociate"] is not None:
