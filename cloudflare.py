@@ -46,7 +46,6 @@ class Cloudflare:
     def __init__(self, api_token, zone_id):
         self.API_TOKEN = api_token
         self.ZONE_ID = zone_id
-        self.session = requests.Session()
 
         self.headers = {
             "Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}",
@@ -63,7 +62,7 @@ class Cloudflare:
         
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
 
-        response = self.session.get(url, headers=self.headers)
+        response = requests.get(url, headers=self.headers)
 
         if response.status_code == 200:
             return json.loads(response.content)["result"]
@@ -207,7 +206,7 @@ class Cloudflare:
 
     def delete(self, identifier):
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{identifier}"
-        response = self.session.delete(url, headers=self.headers)
+        response = requests.delete(url, headers=self.headers)
         
         CACHE_INSTANCE.get_subdomains(force_refresh=True)
         return response
@@ -285,7 +284,7 @@ class Cloudflare:
     def __execute(self, dns_record_data):  # for post
 
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
-        response = self.session.post(
+        response = requests.post(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
         yes = Thread(target=CACHE_INSTANCE.get_subdomains, args=(True,))
@@ -296,7 +295,7 @@ class Cloudflare:
 
     def __put(self, id, dns_record_data):
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{id}"
-        response = self.session.put(
+        response = requests.put(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
         yes = Thread(target=CACHE_INSTANCE.get_subdomains, args=(True,))
