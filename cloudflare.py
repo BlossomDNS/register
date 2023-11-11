@@ -209,7 +209,7 @@ class Cloudflare:
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{identifier}"
         response = self.session.delete(url, headers=self.headers)
         
-        CACHE_INSTANCE.get_subdomains(force_refresh=True)
+        Thread(target=CACHE_INSTANCE.get_subdomains(force_refresh=True)).start()
         return response
     
     def find_and_delete(self, name: str) -> bool:
