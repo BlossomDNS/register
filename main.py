@@ -151,7 +151,6 @@ def dashboard(response: str = ""):
             domains_thread = ThreadWithReturnValue(target=CACHE_INSTANCE.get_subdomains, args=(True,))
             domains_thread.start()
             
-        Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{INPUT}``",)).start()
         #return redirect("dashboard")
 
 
