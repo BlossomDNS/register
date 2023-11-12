@@ -36,21 +36,31 @@ body {
     width: 100%;
     top: 0;
 }
+
 .navbar-nav {
     justify-content: center;
-    margin-left:530px;
+    text-align: center;
+    margin-left: 0;
     gap: 10px;
+    padding: 10px;
+    margin-left: 510px;
 }
+
 .nav-link {
     color: white !important;
     position: relative;
     transition: all 0.3s ease-in-out;
+    padding: 10px 15px;
+    text-align: center;
+    display: block;
 }
+
 .nav-link::after {
     content: '';
     position: absolute;
-    bottom: -2px;
-    left: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 0;
     height: 2px;
     background-color: white;
@@ -60,4 +70,14 @@ body {
 .nav-link:hover::after,
 .nav-link:focus::after {
     width: 100%;
+}
+
+@media (max-width: 768px) {
+    .navbar-nav {
+        justify-content: space-around;
+        text-align: center;
+        margin-left: 0;
+        gap: 10px;
+        padding: 10px;
+    }
 }
