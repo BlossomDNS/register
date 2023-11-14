@@ -1,3 +1,4 @@
+from threadedreturn import ThreadWithReturnValue
 from threading import Thread
 
 '''
@@ -5,45 +6,7 @@ concurrency.py
 
 Code here is designed to speed up certain processes that might take too long
 
-ThreadWithReturnValue is used on functions that returns a certain variable
 '''
-class ThreadWithReturnValue(Thread):
-    def __init__(self, group=None, target=None, name=None,
-                 args=(), kwargs={}, Verbose=None):
-        """
-        Initialize a ThreadWithReturnValue instance.
-
-        Parameters:
-        - group: Thread group (not commonly used, defaults to None).
-        - target: The callable object to be invoked when the thread starts.
-        - name: The thread name.
-        - args: A tuple of positional arguments to pass to the target function.
-        - kwargs: A dictionary of keyword arguments to pass to the target function.
-        - Verbose: Verbose level (not commonly used, defaults to None).
-        """
-        Thread.__init__(self, group, target, name, args, kwargs)
-        self._return = None
-
-    def run(self):
-        """
-        Override the run method to execute the target function and store its return value.
-        """
-        if self._target is not None:
-            self._return = self._target(*self._args,
-                                                **self._kwargs)
-    def join(self, *args):
-        """
-        Override the join method to return the stored return value after joining the thread.
-
-        Parameters:
-        - args: Additional arguments to pass to the join method (not commonly used).
-
-        Returns:
-        - object: The return value of the target function executed by the thread.
-        """
-        Thread.join(self, *args)
-        return self._return
-
 def cloudf_doms(DOMAINS, CLOUDFLARE) -> list:
     """
     Retrieve all subdomains for a list of domains using Cloudflare API.

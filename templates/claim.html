@@ -54,6 +54,12 @@
         </form>
     </div>
     <script src="static/styles/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('navbar-toggler').addEventListener('click', function () {
+            var navbarNav = document.querySelector('.navbar-collapse');
+            navbarNav.classList.toggle('show');
+        });
+    </script>
 </body>
 
 </html>
