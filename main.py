@@ -27,7 +27,7 @@ def indexnormal():
 
 #/edit
 @app.route("/edit", methods=["GET","POST"])
-def edit(error=""):
+def edit():
     if "id" not in session:
         return redirect("/")
     
@@ -58,7 +58,7 @@ def edit(error=""):
 
     
     
-    return render_template("edit.html", domain=DOM, error=error)
+    return render_template("edit.html", domain=DOM, error="")
 
 #/claim
 @app.route("/claim", methods=["GET", "POST"])
