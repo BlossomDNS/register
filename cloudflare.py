@@ -15,8 +15,6 @@ from concurrency import cloudf_doms
 from config import *
 from threading import Thread
 
-from config import CLOUDFLARE_DOMAINS
-
 class Cache():
     def __init__(self,CLOUDFLARE=None) -> None:
         self.all_sub_domains = []
