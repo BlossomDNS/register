@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, flash, g, redirect, render_template, request, session, url_for
+from flask import Flask, g, redirect, render_template, request, session, url_for
 from admins import *
 #from cache import Cache
 from cloudflare import *
@@ -8,6 +8,7 @@ from data_sql import *
 from discord import get_github_username, send_discord_message
 from concurrency import *
 from threadedreturn import ThreadWithReturnValue
+
 #Sql Wrapper
 database = dataSQL(dbfile="database.db")
 #Flask App
@@ -295,6 +296,7 @@ def after_request_func(response):
 if not DEBUG_MODE:
     @app.errorhandler(Exception)
     def handle_error(error):
+        import sys
         exc_type, exc_value, exc_traceback = sys.exc_info()
         error_message = f"An error occurred: {exc_type} - {exc_value}"
         target = session["id"]
