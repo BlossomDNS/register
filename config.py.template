@@ -30,3 +30,5 @@ WEBHOOK_URL=""
 PORT = (integer)
 
 SECRET_KEY = ""
+
+DEBUG_MODE = True

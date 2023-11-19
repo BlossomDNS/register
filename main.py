@@ -292,13 +292,14 @@ def after_request_func(response):
 # ERROR HANDLING
 # Goes to another website and prints issue
 #=======================================
-#@app.errorhandler(Exception)
-#def handle_error(error):
-#    exc_type, exc_value, exc_traceback = sys.exc_info()
-#    error_message = f"An error occurred: {exc_type} - {exc_value}"
-#    target = session["id"]
-#    Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has encountered an error: ``{error_message}``",)).start()
-#    return render_template("error.html",error=error_message)
+if not DEBUG_MODE:
+    @app.errorhandler(Exception)
+    def handle_error(error):
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        error_message = f"An error occurred: {exc_type} - {exc_value}"
+        target = session["id"]
+        Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has encountered an error: ``{error_message}``",)).start()
+        return render_template("error.html",error=error_message)
 
 
 #STARTUP
@@ -318,8 +319,11 @@ if __name__ == "__main__":
     # serve(app, host="0.0.0.0", port=8080)
     startup()
     app.register_blueprint(authentication)
-    try:
-        from waitress import serve
-        serve(app, host="0.0.0.0", port=PORT)
-    except:
-        app.run(host="0.0.0.0", port=PORT, debug=False, threaded=True)
+    if DEBUG_MODE:
+        app.run(host="0.0.0.0", port=PORT, debug=DEBUG_MODE, threaded=True)
+    else:
+        try:
+            from waitress import serve
+            serve(app, host="0.0.0.0", port=PORT)
+        except:
+            app.run(host="0.0.0.0", port=PORT, debug=False, threaded=True)
