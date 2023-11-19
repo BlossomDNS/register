@@ -9,7 +9,7 @@ Sending requests to cloudflare
 """
 
 import requests
-import json
+import orjson as json
 from cloudflare import *
 from concurrency import cloudf_doms
 from config import *
