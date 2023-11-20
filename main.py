@@ -1,7 +1,6 @@
 import requests
 from flask import Flask, g, redirect, render_template, request, session, url_for
 from admins import *
-#from cache import Cache
 from cloudflare import *
 from routes.authentication import *
 from data_sql import *
@@ -326,7 +325,7 @@ if __name__ == "__main__":
     # serve(app, host="0.0.0.0", port=8080)
     startup()
     app = define_app()
-    app.register_blueprint(authentication)
+    app.register_blueprint(authentication())
     if DEBUG_MODE:
         app.run(host="0.0.0.0", port=PORT, debug=DEBUG_MODE, threaded=True)
     else:
