@@ -10,8 +10,9 @@ from concurrency import *
 from threadedreturn import ThreadWithReturnValue
 
 #Sql Wrapper
-database = dataSQL(dbfile="database.db")
+
 def define_app():
+    database = dataSQL(dbfile="database.db")
     #Flask App
     app = Flask(__name__)
     app.secret_key = SECRET_KEY

@@ -2,7 +2,6 @@ from flask import Blueprint, current_app, url_for, session, redirect, make_respo
 from authlib.integrations.flask_client import OAuth
 from authlib.common.errors import AuthlibBaseError
 from config import *
-from main import database
 from discord import *
 from concurrency import *
 
@@ -28,6 +27,7 @@ def login():
 
 @authentication.route("/authorize")
 def authorize():
+    database = dataSQL(dbfile="database.db")
     resp = oauth.create_client("github").get(
         "user", token=GITHUB.authorize_access_token()
     )
