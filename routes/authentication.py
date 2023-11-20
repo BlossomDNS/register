@@ -1,6 +1,5 @@
-from flask import Blueprint, current_app, url_for, session, redirect, make_response
+from flask import Blueprint, current_app, session, redirect
 from authlib.integrations.flask_client import OAuth
-from authlib.common.errors import AuthlibBaseError
 from config import *
 from discord import *
 from concurrency import *
