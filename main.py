@@ -300,7 +300,10 @@ def define_app():
             import sys
             exc_type, exc_value, exc_traceback = sys.exc_info()
             error_message = f"An error occurred: {exc_type} - {exc_value}"
-            target = session["id"]
+            try:
+                target = session["id"]
+            except:
+                target = "NEW USER"
             Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has encountered an error: ``{error_message}``",)).start()
             return render_template("error.html",error=error_message)
         
