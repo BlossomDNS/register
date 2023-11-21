@@ -8,10 +8,13 @@ from discord import get_github_username, send_discord_message
 from concurrency import *
 from threadedreturn import ThreadWithReturnValue
 
-#Sql Wrapper
 
-def define_app():
-    database = dataSQL(dbfile="database.db")
+def define_app(database = dataSQL(dbfile="database.db")):
+    """
+    This defines the application of the web app
+    database doesn't need to be defined (as it is already pre-defined)
+    returns the application
+    """
     #Flask App
     app = Flask(__name__)
     app.secret_key = SECRET_KEY
@@ -324,11 +327,10 @@ def startup():
     
 
 if __name__ == "__main__":
-    # from waitress import serve
-    # serve(app, host="0.0.0.0", port=8080)
     startup()
     app = define_app()
     app.register_blueprint(authentication())
+    
     if DEBUG_MODE:
         app.run(host="0.0.0.0", port=PORT, debug=DEBUG_MODE, threaded=True)
     else:
