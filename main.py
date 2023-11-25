@@ -306,7 +306,7 @@ def define_app(database = dataSQL(dbfile="database.db")):
             try:
                 target = session["id"]
             except:
-                pass
+                return render_template("error.html", error=error_message)
             Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has encountered an error: ``{error_message}``",)).start()
             return render_template("error.html",error=error_message)
         
