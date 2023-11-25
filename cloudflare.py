@@ -301,11 +301,22 @@ class Cloudflare:
 
         yes.join()
         return response
-    
-CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, zone_id=domain["cloudflare_zone_id"]) for domain in CLOUDFLARE_DOMAINS}
-CACHE_INSTANCE = Cache(CLOUDFLARE)
-DOMAINS = tuple(CLOUDFLARE)
 
-#Not needed anymore!
-del CLOUDFLARE_DOMAINS
-del CLOUDFLARE_API_TOKEN
+
+
+
+def CLOUDFLARE_GEN():
+    CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, zone_id=domain["cloudflare_zone_id"]) for domain in CLOUDFLARE_DOMAINS}
+    while True: yield CLOUDFLARE
+
+def CACHE_GEN():
+    x = Cache(next(CLOUDFLARE_GEN()))
+    while True: yield x
+
+def DOMAINS_GEN():
+    x = tuple(next(CLOUDFLARE_GEN()))
+    while True: yield x
+
+CLOUDFLARE = next(CLOUDFLARE_GEN())
+CACHE_INSTANCE = next(CACHE_GEN())
+DOMAINS = next(DOMAINS_GEN())
