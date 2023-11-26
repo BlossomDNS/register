@@ -52,6 +52,7 @@ def define_app(database = dataSQL(dbfile="database.db")):
             NAME = request.form["name"]
             TYPE = request.form["type"]
             CONTENT = request.form["content"]
+            CLOUDFLARE = CLOUDFLARE()
 
             id = CLOUDFLARE[DOMAIN].find(name=NAME)["id"]
             if CLOUDFLARE[DOMAIN].update(DNS_RECORD_NAME=str(NAME),DNS_RECORD_CONTENT=CONTENT,type=TYPE, id=id).status_code == 200:
@@ -83,23 +84,24 @@ def define_app(database = dataSQL(dbfile="database.db")):
             DOMAIN = request.form["domain"]
 
             if len(INPUT.split(".")) > 1:
-                return render_template("claim.html", error="Inappropriate Choice", domains=DOMAINS)
+                return render_template("claim.html", error="Inappropriate Choice", domains=DOMAINS())
 
-            if DOMAIN not in CLOUDFLARE:
-                return render_template("claim.html", error="We Don't Offer That Domain", domains=DOMAINS)
+            CF = CLOUDFLARE()
+            if DOMAIN not in CF:
+                return render_template("claim.html", error="We Don't Offer That Domain", domains=DOMAINS())
             
             SUBDOMAIN = f"{INPUT}.{DOMAIN}"
 
-            if CLOUDFLARE[DOMAIN].find(name=SUBDOMAIN):
-                return render_template("claim.html", error="Domain already taken", domains=DOMAINS)
+            if CF[DOMAIN].find(name=SUBDOMAIN):
+                return render_template("claim.html", error="Domain already taken", domains=DOMAINS())
 
             max_domains = max_domains_thread.join()
             if max_domains <= len(domains_thread.join()):
-                return render_template("claim.html", error="You already have the maximum number of domains.",domains=DOMAINS)
+                return render_template("claim.html", error="You already have the maximum number of domains.",domains=DOMAINS())
 
 
             # Give the user the subdomain
-            response = CLOUDFLARE[DOMAIN].insert_CNAME_record(
+            response = CF[DOMAIN].insert_CNAME_record(
                 DNS_RECORD_NAME=SUBDOMAIN,
                 DNS_RECORD_CONTENT="github.com",
                 comment=f"OWNER RESPONSIBLE IS {target} as {get_github_username(github_id=target)}"
@@ -107,10 +109,10 @@ def define_app(database = dataSQL(dbfile="database.db")):
 
             if response.status_code != 200:
                 Thread(target=send_discord_message, args = (response.text,)).start()
-                return render_template("claim.html", error="Domain already exist on Cloudflare.", domains=DOMAINS)
+                return render_template("claim.html", error="Domain already exist on Cloudflare.", domains=DOMAINS())
 
             database.new_subdomain(token=session["id"], subdomain=SUBDOMAIN)
-            t = ThreadWithReturnValue(target=CACHE_INSTANCE.get_subdomains, args=(True,))
+            t = ThreadWithReturnValue(target=CACHE_INSTANCE().get_subdomains, args=(True,))
             t.start()
             Thread(target=send_discord_message, args = (f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **claimed** the domain: ``{SUBDOMAIN}``",)).start()
             t.join()
@@ -119,7 +121,7 @@ def define_app(database = dataSQL(dbfile="database.db")):
 
 
         else:
-            return render_template("claim.html", error="", domains=DOMAINS)
+            return render_template("claim.html", error="", domains=DOMAINS())
 
     #/dashboard
     @app.route("/dashboard", methods=["GET", "POST"])
@@ -128,7 +130,7 @@ def define_app(database = dataSQL(dbfile="database.db")):
             return redirect("login")
         domains_thread = ThreadWithReturnValue(target=database.subdomains_from_token, args=(session["id"],))
         domains_thread.start()
-        all_sub_domains_thread = ThreadWithReturnValue(target=CACHE_INSTANCE.get_subdomains)
+        all_sub_domains_thread = ThreadWithReturnValue(target=CACHE_INSTANCE().get_subdomains)
         all_sub_domains_thread.start()
         target = session["id"]
         
@@ -150,10 +152,10 @@ def define_app(database = dataSQL(dbfile="database.db")):
                 return redirect("dashboard")
 
 
-            if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
+            if CLOUDFLARE()[DOMAIN].find_and_delete(INPUT):
                 database.delete(subdomain=INPUT)
                 send_discord_message(f"SESSION ID ``{target}`` as ``{get_github_username(github_id=target)}`` has **deleted** the domain: ``{INPUT}``.")
-                domains_thread = ThreadWithReturnValue(target=CACHE_INSTANCE.get_subdomains, args=(True,))
+                domains_thread = ThreadWithReturnValue(target=CACHE_INSTANCE().get_subdomains, args=(True,))
                 domains_thread.start()
                 
             #return redirect("dashboard")
@@ -230,7 +232,7 @@ def define_app(database = dataSQL(dbfile="database.db")):
         if not g.user:
             return redirect(url_for("adminlogin"))
         
-        subdomains = ThreadWithReturnValue(target=cloudf_doms, args = (DOMAINS,CLOUDFLARE,))
+        subdomains = ThreadWithReturnValue(target=cloudf_doms, args = (DOMAINS(),CLOUDFLARE(),))
         subdomains.start()
 
         owners = database.admin_fetchall()
@@ -243,7 +245,7 @@ def define_app(database = dataSQL(dbfile="database.db")):
             insert = INPUT.split(".")
             DOMAIN = insert[1] + "." + insert[2]
 
-            if CLOUDFLARE[DOMAIN].find_and_delete(INPUT):
+            if CLOUDFLARE()[DOMAIN].find_and_delete(INPUT):
                 database.delete(subdomain=INPUT)
             
             target = session["admin_email"]
@@ -251,7 +253,7 @@ def define_app(database = dataSQL(dbfile="database.db")):
             
             #re-run the code
             subdomains.join()
-            subdomains = ThreadWithReturnValue(target=cloudf_doms, args = (DOMAINS,CLOUDFLARE,)) #re-run it
+            subdomains = ThreadWithReturnValue(target=cloudf_doms, args = (DOMAINS(),CLOUDFLARE(),)) #re-run it
             subdomains.start()
         
         elif "disassociate" in args and args["disassociate"] is not None:
@@ -317,7 +319,7 @@ def define_app(database = dataSQL(dbfile="database.db")):
 #STARTUP
 #Sets up Cache ahead of time
 def startup():
-    t = Thread(target=CACHE_INSTANCE.get_subdomains, args=(False,))
+    t = Thread(target=CACHE_INSTANCE().get_subdomains, args=(False,))
     t.start()
     print("SERVER STARTED...")
     send_discord_message("SERVER STARTING!")

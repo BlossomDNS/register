@@ -25,7 +25,7 @@ class Cache():
         
     def get_subdomains(self, force_refresh: bool=False):
         if (self.all_sub_domains == []) or (force_refresh):
-            all_domains = cloudf_doms(DOMAINS, self.CLOUDFLARE)
+            all_domains = cloudf_doms(DOMAINS(), self.CLOUDFLARE)
             self.all_sub_domains = all_domains
             
         return self.all_sub_domains
@@ -285,7 +285,7 @@ class Cloudflare:
         response = requests.post(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
-        yes = Thread(target=CACHE_INSTANCE.get_subdomains, args=(True,))
+        yes = Thread(target=CACHE_INSTANCE().get_subdomains, args=(True,))
         yes.start()
 
         yes.join()
@@ -303,8 +303,6 @@ class Cloudflare:
         return response
 
 
-
-
 def CLOUDFLARE_GEN():
     CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, zone_id=domain["cloudflare_zone_id"]) for domain in CLOUDFLARE_DOMAINS}
     while True: yield CLOUDFLARE
@@ -317,6 +315,6 @@ def DOMAINS_GEN():
     x = tuple(next(CLOUDFLARE_GEN()))
     while True: yield x
 
-CLOUDFLARE = next(CLOUDFLARE_GEN())
-CACHE_INSTANCE = next(CACHE_GEN())
-DOMAINS = next(DOMAINS_GEN())
+def CLOUDFLARE(): return next(CLOUDFLARE_GEN())
+def CACHE_INSTANCE(): return next(CACHE_GEN())
+def DOMAINS():return next(DOMAINS_GEN())
