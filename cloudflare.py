@@ -237,14 +237,7 @@ class Cloudflare:
         """
         x = self.getDNSrecords()
 
-        for domain in x:
-            if domain["name"]==name:
-                if self.delete(identifier=domain["id"]).status_code == 200:
-                    return True
-                else:
-                    return False
-                
-        return False
+        return any(self.delete(identifier=domain["id"]).status_code == 200 for domain in x if domain["name"] == name)
     
     def find(self, name:str) -> dict:
         """
