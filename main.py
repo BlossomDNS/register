@@ -41,6 +41,8 @@ def define_app(database = dataSQL(dbfile="database.db")):
         if INPUT not in database.subdomains_from_token(session=session["id"]):
             return redirect("dashboard")
         
+        CLOUDFLARE = next(CLOUDFLARE_GEN())
+
         DOMAIN = INPUT.split(".")[1]+"."+INPUT.split(".")[2]
         DOM = CLOUDFLARE[DOMAIN].find(INPUT)
 
@@ -52,7 +54,7 @@ def define_app(database = dataSQL(dbfile="database.db")):
             NAME = request.form["name"]
             TYPE = request.form["type"]
             CONTENT = request.form["content"]
-            CLOUDFLARE = CLOUDFLARE()
+            
 
             id = CLOUDFLARE[DOMAIN].find(name=NAME)["id"]
             if CLOUDFLARE[DOMAIN].update(DNS_RECORD_NAME=str(NAME),DNS_RECORD_CONTENT=CONTENT,type=TYPE, id=id).status_code == 200:

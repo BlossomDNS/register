@@ -289,7 +289,7 @@ class Cloudflare:
         response = requests.put(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
-        yes = Thread(target=CACHE_INSTANCE.get_subdomains, args=(True,))
+        yes = Thread(target=CACHE_INSTANCE().get_subdomains, args=(True,))
         yes.start()
 
         yes.join()
