@@ -144,8 +144,8 @@ class dataSQL:
         self.connection = self.connect()
         self.cursor = self.connection.cursor()
         
-        query = f"SELECT COUNT(*) FROM users WHERE token = '{token}'"
-        self.cursor.execute(query)
+        query = f"SELECT COUNT(*) FROM users WHERE token = ?"
+        self.cursor.execute(query, (token, ))
 
         count = self.cursor.fetchone()[0]
         
