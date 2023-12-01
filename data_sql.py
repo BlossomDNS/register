@@ -23,14 +23,25 @@ class dataSQL:
         self.connection = sqlite3.connect(self.dbfile)
         self.cursor = self.connection.cursor()
 
-        self.connection.execute(
-            "CREATE TABLE IF NOT EXISTS users (token TEXT, username TEXT, max INTEGER DEFAULT 1)"
-        )
-        self.connection.execute(
-            "CREATE TABLE IF NOT EXISTS subdomains (token TEXT, subdomain TEXT)"
-        )
-        self.connection.commit()
-        self.connection.close()
+        self.create_tables()
+
+    def create_tables(self):
+        self.cursor.executescript('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                token TEXT UNIQUE,
+                username TEXT,
+                email TEXT,
+                password TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS subdomains (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                token TEXT,
+                subdomain TEXT,
+                FOREIGN KEY (token) REFERENCES users(token) ON DELETE CASCADE
+            );
+        ''')
 
     def connect(self) -> sqlite3.Connection:
         """
