@@ -168,27 +168,28 @@ class dataSQL:
         else:
             return False
     
-    def delete(self, subdomain) -> bool:
+    
+    def delete(self, subdomain: str) -> bool:
         """
         Delete a subdomain from the 'subdomains' table.
-
+    
         Parameters:
         - subdomain: The subdomain to be deleted.
-
+    
         Returns:
         - success: True if the deletion is successful, False otherwise.
         """
         try:
             self.connection = self.connect()
             self.cursor = self.connection.cursor()
-            self.cursor.execute(f"DELETE FROM subdomains WHERE subdomain = '{subdomain}'")
+            self.cursor.execute(f"DELETE FROM subdomains WHERE subdomain = %s", (subdomain,))
             self.cursor.close()
             self.close()
             
             return True
-        except:
+        except Exception as e:
             return False
-    
+        
     def owner_of_subdmain(self, subdomain) -> int:
         """
         Retrieve the session token (owner) of a specific subdomain.
