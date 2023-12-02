@@ -59,27 +59,26 @@ class dataSQL:
         self.connection.commit()
         self.connection.close()
 
-    
-    def use_database(self, query: str, values: Optional[Tuple] = None) -> Optional[Tuple]:
+    def use_database(self, query: str, values: tuple = None):
         """
         Execute a database query and return the result.
-    
+
         Parameters:
         - query (str): The SQL query to execute.
-        - values (Optional[Tuple], optional): A tuple of parameter values to bind to the query.
-    
+        - values (tuple, optional): A tuple of parameter values to bind to the query.
+
         Returns:
         - result: The result of the query execution. If it's a SELECT query, it returns the first row as a tuple; otherwise, it returns None.
         """
         self.connection = self.connect()
-    
+
         res = self.connection.execute(query, values)
-        returned_value: Optional[Tuple] = None
+        returned_value = None
         if "select" in query.lower():
             returned_value = res.fetchone()
         self.close()
         return returned_value
-    
+
     def subdomains_from_token(self, session):
         """
         Retrieve a list of subdomains owned by a user with a specific session token.
@@ -191,25 +190,24 @@ class dataSQL:
         except Exception as e:
             return False
         
-    
-    def owner_of_subdmain(self, subdomain: str) -> int:
+    def owner_of_subdmain(self, subdomain) -> int:
         """
         Retrieve the session token (owner) of a specific subdomain.
-    
+
         Parameters:
         - subdomain: The subdomain to query ownership for.
-    
+
         Returns:
         - owner_token: The session token (as an integer) of the owner of the subdomain.
         """
-        self.connection: Connection = self.connect()
-        self.cursor: Cursor = self.connection.cursor()
+        self.connection = self.connect()
+        self.cursor = self.connection.cursor()
         self.cursor.execute(f'SELECT Token FROM subdomains WHERE subdomain = "{subdomain}";')
-        token: int = self.cursor.fetchone()[0]
+        token = self.cursor.fetchone()[0]
         self.cursor.close()
         self.close()
         return token
-        
+    
     def admin_fetchall(self) -> list:
         output = []
         self.connection = self.connect()
