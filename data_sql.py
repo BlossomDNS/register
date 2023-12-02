@@ -59,26 +59,27 @@ class dataSQL:
         self.connection.commit()
         self.connection.close()
 
-    def use_database(self, query: str, values: tuple = None):
+    
+    def use_database(self, query: str, values: Optional[Tuple] = None) -> Optional[Tuple]:
         """
         Execute a database query and return the result.
-
+    
         Parameters:
         - query (str): The SQL query to execute.
-        - values (tuple, optional): A tuple of parameter values to bind to the query.
-
+        - values (Optional[Tuple], optional): A tuple of parameter values to bind to the query.
+    
         Returns:
         - result: The result of the query execution. If it's a SELECT query, it returns the first row as a tuple; otherwise, it returns None.
         """
         self.connection = self.connect()
-
+    
         res = self.connection.execute(query, values)
-        returned_value = None
+        returned_value: Optional[Tuple] = None
         if "select" in query.lower():
             returned_value = res.fetchone()
         self.close()
         return returned_value
-
+    
     def subdomains_from_token(self, session):
         """
         Retrieve a list of subdomains owned by a user with a specific session token.
