@@ -190,24 +190,25 @@ class dataSQL:
         except Exception as e:
             return False
         
-    def owner_of_subdmain(self, subdomain) -> int:
+    
+    def owner_of_subdmain(self, subdomain: str) -> int:
         """
         Retrieve the session token (owner) of a specific subdomain.
-
+    
         Parameters:
         - subdomain: The subdomain to query ownership for.
-
+    
         Returns:
         - owner_token: The session token (as an integer) of the owner of the subdomain.
         """
-        self.connection = self.connect()
-        self.cursor = self.connection.cursor()
+        self.connection: Connection = self.connect()
+        self.cursor: Cursor = self.connection.cursor()
         self.cursor.execute(f'SELECT Token FROM subdomains WHERE subdomain = "{subdomain}";')
-        token = self.cursor.fetchone()[0]
+        token: int = self.cursor.fetchone()[0]
         self.cursor.close()
         self.close()
         return token
-    
+        
     def admin_fetchall(self) -> list:
         output = []
         self.connection = self.connect()
