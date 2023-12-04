@@ -12,7 +12,7 @@ My java professor is cool
 
 
 class dataSQL:
-    def __init__(self, dbfile):
+    def __init__(self, dbfile: str = "database"):
         """
         Initialize a DatabaseManager with the specified SQLite database file.
 
