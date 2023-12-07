@@ -12,6 +12,14 @@ My java professor is cool
 
 
 class dataSQL:
+    """
+    A class for interacting with a SQLite database.
+
+    Attributes:
+        dbfile (str): The path to the SQLite database file.
+        connection (sqlite3.Connection): The connection to the database.
+        cursor (sqlite3.Cursor): The cursor for executing queries.
+    """
     def __init__(self, dbfile: str = "database"):
         """
         Initialize a DatabaseManager with the specified SQLite database file.
