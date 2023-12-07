@@ -64,10 +64,8 @@ class Cloudflare:
 
         if response.status_code == 200:
             return json.loads(response.content)["result"]
-        else:
-            print("DIDN'T GET DNS RECORDS")
 
-        return
+        return None
 
     # Most likely we won't use this. (clueless)
     def insert_A_record(
