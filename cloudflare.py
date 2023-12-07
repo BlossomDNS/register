@@ -9,13 +9,11 @@ Sending requests to cloudflare
 """
 
 import requests
-import json
+import orjson as json
 from cloudflare import *
 from concurrency import cloudf_doms
 from config import *
 from threading import Thread
-
-from config import CLOUDFLARE_DOMAINS
 
 class Cache():
     def __init__(self,CLOUDFLARE=None) -> None:
@@ -27,7 +25,7 @@ class Cache():
         
     def get_subdomains(self, force_refresh: bool=False):
         if (self.all_sub_domains == []) or (force_refresh):
-            all_domains = cloudf_doms(DOMAINS, self.CLOUDFLARE)
+            all_domains = cloudf_doms(DOMAINS(), self.CLOUDFLARE)
             self.all_sub_domains = all_domains
             
         return self.all_sub_domains
@@ -66,10 +64,8 @@ class Cloudflare:
 
         if response.status_code == 200:
             return json.loads(response.content)["result"]
-        else:
-            print("DIDN'T GET DNS RECORDS")
 
-        return
+        return None
 
     # Most likely we won't use this. (clueless)
     def insert_A_record(
@@ -208,7 +204,7 @@ class Cloudflare:
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records/{identifier}"
         response = requests.delete(url, headers=self.headers)
         
-        Thread(target=CACHE_INSTANCE.get_subdomains(force_refresh=True)).start()
+        #Thread(target=CACHE_INSTANCE.get_subdomains(force_refresh=True)).start()
         return response
     
     def find_and_delete(self, name: str) -> bool:
@@ -239,14 +235,7 @@ class Cloudflare:
         """
         x = self.getDNSrecords()
 
-        for domain in x:
-            if domain["name"]==name:
-                if self.delete(identifier=domain["id"]).status_code == 200:
-                    return True
-                else:
-                    return False
-                
-        return False
+        return any(self.delete(identifier=domain["id"]).status_code == 200 for domain in x if domain["name"] == name)
     
     def find(self, name:str) -> dict:
         """
@@ -287,7 +276,7 @@ class Cloudflare:
         response = requests.post(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
-        yes = Thread(target=CACHE_INSTANCE.get_subdomains, args=(True,))
+        yes = Thread(target=CACHE_INSTANCE().get_subdomains, args=(True,))
         yes.start()
 
         yes.join()
@@ -298,16 +287,25 @@ class Cloudflare:
         response = requests.put(
             url, headers=self.headers, data=json.dumps(dns_record_data)
         )
-        yes = Thread(target=CACHE_INSTANCE.get_subdomains, args=(True,))
+        yes = Thread(target=CACHE_INSTANCE().get_subdomains, args=(True,))
         yes.start()
 
         yes.join()
         return response
-    
-CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, zone_id=domain["cloudflare_zone_id"]) for domain in CLOUDFLARE_DOMAINS}
-CACHE_INSTANCE = Cache(CLOUDFLARE)
-DOMAINS = set(CLOUDFLARE)
 
-#Not needed anymore!
-del CLOUDFLARE_DOMAINS
-del CLOUDFLARE_API_TOKEN
+
+def CLOUDFLARE_GEN():
+    CLOUDFLARE = {domain["url"]: Cloudflare(api_token=CLOUDFLARE_API_TOKEN, zone_id=domain["cloudflare_zone_id"]) for domain in CLOUDFLARE_DOMAINS}
+    while True: yield CLOUDFLARE
+
+def CACHE_GEN():
+    x = Cache(next(CLOUDFLARE_GEN()))
+    while True: yield x
+
+def DOMAINS_GEN():
+    x = tuple(next(CLOUDFLARE_GEN()))
+    while True: yield x
+
+def CLOUDFLARE(): return next(CLOUDFLARE_GEN())
+def CACHE_INSTANCE(): return next(CACHE_GEN())
+def DOMAINS():return next(DOMAINS_GEN())

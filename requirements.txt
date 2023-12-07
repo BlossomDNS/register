@@ -3,3 +3,4 @@ Requests==2.31.0
 GitHub-Flask
 authlib
 threadedreturn
+orjson
