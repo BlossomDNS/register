@@ -16,6 +16,7 @@ from config import *
 from threading import Thread
 
 from config import CLOUDFLARE_DOMAINS
+from security import safe_requests
 
 class Cache():
     def __init__(self,CLOUDFLARE=None) -> None:
@@ -62,7 +63,7 @@ class Cloudflare:
         
         url = f"https://api.cloudflare.com/client/v4/zones/{self.ZONE_ID}/dns_records"
 
-        response = requests.get(url, headers=self.headers)
+        response = safe_requests.get(url, headers=self.headers)
 
         if response.status_code == 200:
             return json.loads(response.content)["result"]
