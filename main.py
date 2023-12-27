@@ -160,8 +160,7 @@ def dashboard(response: str = ""):
     user_company = user_info["company"]
 
     
-    domains = domains_thread.join()
-    if domains == []:
+    if (domains := domains_thread.join()) == []:
         return render_template(
             "dashboard.html",
             subdomains=[],
