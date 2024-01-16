@@ -14,7 +14,7 @@ def send_discord_message(content):
     """
     try:
         message = {'content': '**=======**\n'+content+'\n**=======**'}
-        response = requests.post(WEBHOOK_URL, json=message)
+        response = requests.post(WEBHOOK_URL, json=message, timeout=60)
 
         if response.status_code == 204:
             print('Message sent successfully to Discord!')
