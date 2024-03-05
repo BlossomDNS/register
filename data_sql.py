@@ -92,9 +92,9 @@ class dataSQL:
         self.connection = self.connect()
         self.cursor = self.connection.cursor()
 
-        query = f"SELECT subdomain FROM subdomains WHERE token = '{session}'"
+        query = f"SELECT subdomain FROM subdomains WHERE token = ?"
         print(query)
-        self.cursor.execute(query)
+        self.cursor.execute(query, (session, ))
 
         rows = self.cursor.fetchall()
 
