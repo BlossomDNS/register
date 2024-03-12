@@ -155,7 +155,7 @@ class dataSQL:
         self.connection = self.connect()
         self.cursor = self.connection.cursor()
         
-        query = f"SELECT COUNT(*) FROM users WHERE token = ?"
+        query = "SELECT COUNT(*) FROM users WHERE token = ?"
         self.cursor.execute(query, (token, ))
 
         count = self.cursor.fetchone()[0]
@@ -211,7 +211,7 @@ class dataSQL:
         output = []
         self.connection = self.connect()
         self.cursor = self.connection.cursor()
-        self.cursor.execute(f'SELECT * FROM subdomains;')
+        self.cursor.execute('SELECT * FROM subdomains;')
         subdomains = self.cursor.fetchall()
 
         for subdomain in subdomains:
