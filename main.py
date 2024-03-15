@@ -156,6 +156,7 @@ def dashboard(response: str = ""):
 
 
     user_info = user_info_thread.join().json()
+    print(user_info)
     user_profile_picture = user_info["avatar_url"]
     user_company = user_info["company"]
 
