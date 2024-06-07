@@ -92,7 +92,7 @@ class dataSQL:
         self.connection = self.connect()
         self.cursor = self.connection.cursor()
 
-        query = f"SELECT subdomain FROM subdomains WHERE token = ?"
+        query = "SELECT subdomain FROM subdomains WHERE token = ?"
         print(query)
         self.cursor.execute(query, (session, ))
 
@@ -181,7 +181,7 @@ class dataSQL:
         try:
             self.connection = self.connect()
             self.cursor = self.connection.cursor()
-            self.cursor.execute(f"DELETE FROM subdomains WHERE subdomain = '{subdomain}'")
+            self.cursor.execute("DELETE FROM subdomains WHERE subdomain = ?", (subdomain, ))
             self.cursor.close()
             self.close()
             
